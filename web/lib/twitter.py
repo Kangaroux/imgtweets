@@ -1,5 +1,4 @@
 from enum import Enum
-import os
 from dataclasses import dataclass
 from typing import Dict, List
 
