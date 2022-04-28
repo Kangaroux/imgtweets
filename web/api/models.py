@@ -17,7 +17,7 @@ class TwitterUser(BaseModel):
         return self.username
 
 
-class TwitterMedia(BaseModel):
+class Photo(BaseModel):
     user = models.ForeignKey(TwitterUser, on_delete=models.CASCADE)
     key = models.CharField(max_length=50, unique=True)
     url = models.CharField(max_length=255)

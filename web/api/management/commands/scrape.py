@@ -1,8 +1,7 @@
-from unittest import result
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from django.db import transaction, IntegrityError
-from api.models import TwitterUser, TwitterMedia
+from django.db import IntegrityError
+from api.models import TwitterUser, Photo
 
 from lib.twitter import TwitterAPI, TwitterMediaType
 
@@ -56,24 +55,24 @@ class Command(BaseCommand):
             user = TwitterUser.objects.create(twitter_id=u.id, username=u.username)
             print("Created new user")
 
-        media_objects = []
+        photos = []
 
         for t in tweets:
             for m in t.media:
                 if m.type != TwitterMediaType.Photo:
                     continue
 
-                media_objects.append(TwitterMedia(user=user, key=m.key, url=m.url))
+                photos.append(Photo(user=user, key=m.key, url=m.url))
 
-        print(f"Found {len(media_objects)} media")
+        print(f"Found {len(photos)} photos")
 
         added = 0
 
-        for obj in media_objects:
+        for obj in photos:
             try:
                 obj.save()
                 added += 1
             except IntegrityError:
                 pass
 
-        print(f"Added {added} new media")
+        print(f"Added {added} photos")
