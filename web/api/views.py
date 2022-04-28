@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.filters import OrderingFilter
 
 from api.models import Photo, TwitterUser
 from api.serializers import PhotoSerializer, TwitterUserSerializer
@@ -8,6 +9,8 @@ from api.serializers import PhotoSerializer, TwitterUserSerializer
 class PhotoAPI(ReadOnlyModelViewSet):
     queryset = Photo.objects.all()
     serializer_class = PhotoSerializer
+    filter_backends = [OrderingFilter]
+    ordering_fields = "__all__"
 
 
 class TwitterUserAPI(ReadOnlyModelViewSet):
