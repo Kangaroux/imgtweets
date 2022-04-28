@@ -6,32 +6,32 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0001_initial'),
+        ("api", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='photo',
-            options={'ordering': ['-created_at']},
+            name="photo",
+            options={"ordering": ["-created_at"]},
         ),
         migrations.AlterField(
-            model_name='photo',
-            name='created_at',
+            model_name="photo",
+            name="created_at",
             field=models.DateTimeField(auto_now_add=True, db_index=True),
         ),
         migrations.AlterField(
-            model_name='photo',
-            name='updated_at',
+            model_name="photo",
+            name="updated_at",
             field=models.DateTimeField(auto_now=True, db_index=True),
         ),
         migrations.AlterField(
-            model_name='twitteruser',
-            name='created_at',
+            model_name="twitteruser",
+            name="created_at",
             field=models.DateTimeField(auto_now_add=True, db_index=True),
         ),
         migrations.AlterField(
-            model_name='twitteruser',
-            name='updated_at',
+            model_name="twitteruser",
+            name="updated_at",
             field=models.DateTimeField(auto_now=True, db_index=True),
         ),
     ]

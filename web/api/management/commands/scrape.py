@@ -1,8 +1,8 @@
-from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
+from django.core.management.base import BaseCommand, CommandError
 from django.db import IntegrityError
-from api.models import TwitterUser, Photo
 
+from api.models import Photo, TwitterUser
 from lib.twitter import TwitterAPI, TwitterMediaType
 
 

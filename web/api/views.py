@@ -1,8 +1,7 @@
-from rest_framework.response import Response
-from rest_framework.mixins import RetrieveModelMixin
-from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.filters import BaseFilterBackend, OrderingFilter
-from rest_framework.exceptions import ValidationError
+from rest_framework.mixins import RetrieveModelMixin
+from rest_framework.response import Response
+from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from api.models import Photo, TwitterUser
 from api.serializers import PhotoSerializer, TwitterUserSerializer
