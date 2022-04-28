@@ -11,6 +11,9 @@ class BaseModel(models.Model):
 
 class TwitterUser(BaseModel):
     twitter_id = models.CharField(max_length=20, unique=True)
+
+    # Usernames can change, so if possible avoid using this as the lookup
+    # for the user
     username = models.CharField(max_length=15, unique=True)
 
     def __str__(self):
@@ -18,9 +21,10 @@ class TwitterUser(BaseModel):
 
 
 class Photo(BaseModel):
-    user = models.ForeignKey(TwitterUser, on_delete=models.CASCADE)
+    # The media key of the photo. This is basically the Twitter ID.
     key = models.CharField(max_length=50, unique=True)
     url = models.CharField(max_length=255)
+    user = models.ForeignKey(TwitterUser, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.user.username}({self.key})"
