@@ -1,3 +1,12 @@
 from django.contrib import admin
+from .models import TwitterMedia, TwitterUser
 
-# Register your models here.
+
+@admin.register(TwitterMedia)
+class TwitterMediaAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(TwitterUser)
+class TwitterUserAdmin(admin.ModelAdmin):
+    pass

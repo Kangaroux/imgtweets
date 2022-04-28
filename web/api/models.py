@@ -10,17 +10,17 @@ class BaseModel(models.Model):
 
 
 class TwitterUser(BaseModel):
-    twitter_id = models.CharField(max_length=20)
-    username = models.CharField(max_length=15)
+    twitter_id = models.CharField(max_length=20, unique=True)
+    username = models.CharField(max_length=15, unique=True)
+
+    def __str__(self):
+        return self.username
 
 
 class TwitterMedia(BaseModel):
-    # TYPE_PHOTO = "photo"
-    # TYPE_VIDEO = "video"
-    # TYPE_CHOICES = [(TYPE_PHOTO, TYPE_PHOTO), (TYPE_VIDEO, TYPE_VIDEO)]
-
-    # type = models.CharField(max_length=20, choices=TYPE_CHOICES)
-
     user = models.ForeignKey(TwitterUser, on_delete=models.CASCADE)
-    key = models.CharField(max_length=50)
+    key = models.CharField(max_length=50, unique=True)
     url = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.user.username}({self.key})"

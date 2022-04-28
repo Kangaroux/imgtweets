@@ -96,7 +96,11 @@ class TwitterAPI:
 
             # URL seems to be missing for animated_gif media
             url = data.get("url")
-            media[key] = TwitterMedia(key=key, type=data["type"], url=url)
+            media[key] = TwitterMedia(
+                key=key,
+                type=TwitterMediaType(data["type"]),
+                url=url,
+            )
 
         for data in resp.json()["data"]:
             media_keys = data.get("attachments", {}).get("media_keys", [])
