@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Photo, TwitterUser
+from api.models import Photo, TwitterUser
 
 
 @admin.register(Photo)
