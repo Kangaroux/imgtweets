@@ -1,29 +1,37 @@
 from rest_framework.response import Response
+from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.viewsets import ReadOnlyModelViewSet
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import BaseFilterBackend, OrderingFilter
+from rest_framework.exceptions import ValidationError
 
 from api.models import Photo, TwitterUser
 from api.serializers import PhotoSerializer, TwitterUserSerializer
 
 
-class PhotoAPI(ReadOnlyModelViewSet):
-    queryset = Photo.objects.all()
-    serializer_class = PhotoSerializer
-    filter_backends = [OrderingFilter]
-    ordering_fields = "__all__"
+class UsernameFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        username = request.query_params.get("username", "").strip()
+
+        if username:
+            if len(username) < 3:
+                raise ValidationError(
+                    {"username": "Username query must be at least 3 characters."}
+                )
+
+            queryset = queryset.filter(user__username__icontains=username)
+
+        return queryset
 
 
-class TwitterUserAPI(ReadOnlyModelViewSet):
-    queryset = TwitterUser.objects.all()
-    serializer_class = TwitterUserSerializer
-
+class RetrieveMultipleMixin(RetrieveModelMixin):
     def retrieve(self, request, *args, **kwargs):
-        pk = kwargs.get(self.lookup_field)
-        pk_list = list(set([x.strip() for x in pk.split(",")]))
+        lookup = kwargs.get(self.lookup_field)
+        lookup_list = list(set([x.strip() for x in lookup.split(",")]))
 
-        # Return multiple results if the request includes multiple IDs, e.g. /users/1,2,3
-        if len(pk_list) > 1:
-            qs = self.get_queryset().filter(pk__in=pk_list)
+        # Return multiple results if the request includes multiple lookups, e.g. /users/1,2,3
+        if len(lookup_list) > 1:
+            filter_kwargs = {f"{self.lookup_field}__in": lookup_list}
+            qs = self.get_queryset().filter(**filter_kwargs)
             page = self.paginate_queryset(qs)
 
             if page is not None:
@@ -34,3 +42,15 @@ class TwitterUserAPI(ReadOnlyModelViewSet):
             return Response(serializer.data)
 
         return super().retrieve(request, *args, **kwargs)
+
+
+class PhotoAPI(ReadOnlyModelViewSet):
+    queryset = Photo.objects.all()
+    serializer_class = PhotoSerializer
+    filter_backends = [UsernameFilter, OrderingFilter]
+    ordering_fields = "__all__"
+
+
+class TwitterUserAPI(RetrieveMultipleMixin, ReadOnlyModelViewSet):
+    queryset = TwitterUser.objects.all()
+    serializer_class = TwitterUserSerializer
