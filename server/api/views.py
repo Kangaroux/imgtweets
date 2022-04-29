@@ -57,8 +57,12 @@ class PhotoAPI(ReadOnlyModelViewSet):
     serializer_class = PhotoSerializer
     filter_backends = [PhotoUsernameFilter, OrderingFilter]
     ordering_fields = "__all__"
+    ordering = ["-created_at"]
 
 
 class TwitterUserAPI(RetrieveMultipleMixin, ReadOnlyModelViewSet):
     queryset = TwitterUser.objects.all()
     serializer_class = TwitterUserSerializer
+
+    def get_queryset(self):
+        return TwitterUser.objects.all().order_by("id")

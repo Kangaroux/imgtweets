@@ -33,6 +33,3 @@ class Photo(BaseModel):
 
     def __str__(self):
         return f"{self.user.username}({self.key})"
-
-    class Meta:
-        ordering = ["-created_at"]
