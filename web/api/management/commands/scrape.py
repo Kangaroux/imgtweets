@@ -1,10 +1,7 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from django.db import IntegrityError
 
-from api.models import Photo, TwitterUser
-from lib.twitter import TwitterAPI, TwitterMediaType
-from web.lib.scrape import Scraper
+from lib.scrape import Scraper
 
 
 class Command(BaseCommand):
