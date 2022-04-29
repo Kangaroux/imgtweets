@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Photo, TwitterUser
+from api.models import Image, TwitterUser
 
 
 class TwitterUserSerializer(serializers.ModelSerializer):
@@ -9,11 +9,11 @@ class TwitterUserSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class PhotoSerializer(serializers.ModelSerializer):
+class ImageSerializer(serializers.ModelSerializer):
     # Rename the `user` field to `user_id`
     user_id = serializers.IntegerField(source="user.id")
     tweet_url = serializers.CharField()
 
     class Meta:
-        model = Photo
+        model = Image
         exclude = ["user"]

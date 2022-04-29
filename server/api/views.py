@@ -3,13 +3,13 @@ from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from api.models import Photo, TwitterUser
-from api.serializers import PhotoSerializer, TwitterUserSerializer
+from api.models import Image, TwitterUser
+from api.serializers import ImageSerializer, TwitterUserSerializer
 
 
-class PhotoUsernameFilter(BaseFilterBackend):
+class ImageUsernameFilter(BaseFilterBackend):
     """
-    Filter that allows searching for photos from a specific username.
+    Filter that allows searching for images from a specific username.
     Expects a "username" query param. The query is case insensitive and
     does a partial match.
     """
@@ -52,10 +52,10 @@ class RetrieveMultipleMixin(RetrieveModelMixin):
         return super().retrieve(request, *args, **kwargs)
 
 
-class PhotoAPI(ReadOnlyModelViewSet):
-    queryset = Photo.objects.all()
-    serializer_class = PhotoSerializer
-    filter_backends = [PhotoUsernameFilter, OrderingFilter]
+class ImageAPI(ReadOnlyModelViewSet):
+    queryset = Image.objects.all()
+    serializer_class = ImageSerializer
+    filter_backends = [ImageUsernameFilter, OrderingFilter]
     ordering_fields = "__all__"
     ordering = ["-tweet_id"]
 

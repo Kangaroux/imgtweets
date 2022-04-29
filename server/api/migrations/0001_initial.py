@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Photo',
+            name='Image',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created_at', models.DateTimeField(auto_now_add=True, db_index=True)),

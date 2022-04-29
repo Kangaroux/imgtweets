@@ -5,7 +5,7 @@ from lib.scrape import Scraper
 
 
 class Command(BaseCommand):
-    help = "Scrapes photos from a user's timeline"
+    help = "Scrapes images from a user's timeline"
 
     def add_arguments(self, parser):
         parser.add_argument(

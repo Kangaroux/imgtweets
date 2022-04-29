@@ -1,16 +1,16 @@
 import { observer } from "mobx-react-lite";
 import * as API from "../api";
-import { Photo } from "./Photo";
+import { Image } from "./Image";
 import "./ScrollContainer.css";
 
 export interface Props {
-    photos?: API.Photo[];
+    images?: API.Image[];
 }
 
-export const ScrollContainer = observer(({ photos }: Props) => {
-    if (!photos) {
+export const ScrollContainer = observer(({ images }: Props) => {
+    if (!images) {
         return null;
     }
 
-    return <div className="scroll-container">{photos.map(p => <Photo photo={p} />)}</div>;
+    return <div className="scroll-container">{images.map(img => <Image image={img} />)}</div>;
 });

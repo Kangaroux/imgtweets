@@ -20,8 +20,8 @@ class TwitterUser(BaseModel):
         return self.username
 
 
-class Photo(BaseModel):
-    # The media key of the photo. This is basically the Twitter ID.
+class Image(BaseModel):
+    # The media key of the image. This is basically the Twitter ID
     key = models.CharField(max_length=50, unique=True)
     url = models.CharField(max_length=255)
     user = models.ForeignKey(TwitterUser, on_delete=models.CASCADE)

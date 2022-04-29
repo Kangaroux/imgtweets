@@ -2,18 +2,18 @@ import { action, makeAutoObservable } from "mobx";
 import * as API from "./api";
 
 class Store {
-    photos?: API.Photo[];
+    images?: API.Image[];
 
     constructor() {
         makeAutoObservable(this, {
-            getPhotos: action,
+            getImages: action,
         });
     }
 
-    getPhotos() {
-        API.getPhotos().then(photos => {
-            if (photos !== null) {
-                this.photos = photos
+    getImages() {
+        API.getImages().then(images => {
+            if (images !== null) {
+                this.images = images
             }
         });
     }

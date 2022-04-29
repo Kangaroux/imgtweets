@@ -1,17 +1,17 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useRef, useState } from "react";
 import * as API from "../api";
-import "./Photo.css";
+import "./Image.css";
 
 // This margin is the distance between an off-screen image and the viewport.
 // Images that come within this distance will be preloaded
 const intersectMargin = "250px 0px";
 
 export interface Props {
-    photo: API.Photo;
+    image: API.Image;
 }
 
-export const Photo = observer(({ photo }: Props) => {
+export const Image = observer(({ image }: Props) => {
     const [loaded, setLoaded] = useState(false);
     const [visible, setVisible] = useState(false);
     const ref = useRef(null);
@@ -39,9 +39,9 @@ export const Photo = observer(({ photo }: Props) => {
                 // This looks nicer and also prevents an issue where the sudden change
                 // in element height causes a cascading effect of other images being
                 // preloaded before they should be
-                const img = new Image();
+                const img = new window.Image();
                 img.onload = () => setLoaded(true);
-                img.src = photo.url;
+                img.src = image.url;
 
                 setVisible(true);
                 cleanUp();
@@ -54,9 +54,9 @@ export const Photo = observer(({ photo }: Props) => {
     }, [ref.current]);
 
     if (loaded) {
-        return <div className="photo"><img src={photo.url} /></div>;
+        return <div className="image"><img src={image.url} /></div>;
     } else {
         // TODO: If `visible` is true, we could do a loading animation
-        return <div className="photo photo-placeholder" ref={ref}></div>;
+        return <div className="image image-placeholder" ref={ref}></div>;
     }
 });

@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from api.models import Photo, TwitterUser
+from api.models import Image, TwitterUser
 
 
-@admin.register(Photo)
+@admin.register(Image)
 class TwitterMediaAdmin(admin.ModelAdmin):
     pass
 

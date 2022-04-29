@@ -7,7 +7,7 @@ interface ListResponse {
     results: any[];
 }
 
-export interface Photo {
+export interface Image {
     id: number;
     userId: number;
     tweetUrl: string;
@@ -18,19 +18,19 @@ export interface Photo {
     tweetId: string;
 }
 
-export async function getPhotos(): Promise<Photo[] | null> {
-    const resp = await fetch(basePath + "/photos");
+export async function getImages(): Promise<Image[] | null> {
+    const resp = await fetch(basePath + "/images");
 
     if (!resp.ok) {
         console.error(resp);
         return null;
     }
 
-    const photos: Photo[] = [];
+    const images: Image[] = [];
     const data = await resp.json() as ListResponse;
 
     for (const p of data.results) {
-        photos.push({
+        images.push({
             id: p.id,
             userId: p.user_id,
             tweetUrl: p.tweet_url,
@@ -42,5 +42,5 @@ export async function getPhotos(): Promise<Photo[] | null> {
         })
     }
 
-    return photos;
+    return images;
 }

@@ -2,7 +2,7 @@ import logging
 
 from django.db import IntegrityError
 
-from api.models import Photo, TwitterUser
+from api.models import Image, TwitterUser
 from lib.twitter import TwitterAPI, TwitterMediaType
 
 logger = logging.getLogger(__name__)
@@ -41,15 +41,15 @@ class Scraper:
             user = TwitterUser.objects.create(twitter_id=u.id, username=u.username)
             logger.debug("Created new user")
 
-        photos = []
+        images = []
 
         for t in tweets:
             for m in t.media:
                 if m.type != TwitterMediaType.Photo:
                     continue
 
-                photos.append(
-                    Photo(
+                images.append(
+                    Image(
                         key=m.key,
                         tweet_id=t.tweet_id,
                         url=m.url,
@@ -57,16 +57,16 @@ class Scraper:
                     )
                 )
 
-        logger.debug(f"Found {len(photos)} photos")
+        logger.debug(f"Found {len(images)} images")
 
         added = 0
 
-        for obj in photos:
+        for obj in images:
             try:
                 obj.save()
                 added += 1
             except IntegrityError:
                 pass
 
-        logger.debug(f"Added {added} new photos")
+        logger.debug(f"Added {added} new images")
         logger.info("Finished scraping")
