@@ -4,8 +4,11 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "clean": "rm -rf dist/",
-    "build": "esbuild app=src/index.jsx style=src/style.css --bundle --minify --jsx-factory=h --jsx-fragment=Fragment --outdir=dist",
+    "clean": "rm -rf dist/ && mkdir dist/",
+    "build:html": "cp src/index.html dist/",
+    "build:js": "esbuild app=src/index.jsx --bundle --minify --outdir=dist --jsx-factory=h --jsx-fragment=Fragment",
+    "build:css": "esbuild style=src/style.css --bundle --minify --outdir=dist",
+    "build": "yarn build:html && yarn build:js && yarn build:css",
     "serve": "esbuild app=src/index.jsx style=src/style.css --bundle --sourcemap --jsx-factory=h --jsx-fragment=Fragment --serve=localhost:4321 --servedir=src --outdir=src/static"
   },
   "devDependencies": {
