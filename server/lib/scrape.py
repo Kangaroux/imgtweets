@@ -48,7 +48,14 @@ class Scraper:
                 if m.type != TwitterMediaType.Photo:
                     continue
 
-                photos.append(Photo(user=user, key=m.key, url=m.url))
+                photos.append(
+                    Photo(
+                        key=m.key,
+                        tweet_id=t.tweet_id,
+                        url=m.url,
+                        user=user,
+                    )
+                )
 
         logger.debug(f"Found {len(photos)} photos")
 
