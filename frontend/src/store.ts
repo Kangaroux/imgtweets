@@ -2,7 +2,7 @@ import { action, makeAutoObservable } from "mobx";
 import * as API from "./api";
 
 class Store {
-    photos = [];
+    photos: API.Photo[] = [];
 
     constructor() {
         makeAutoObservable(this, {
@@ -11,7 +11,11 @@ class Store {
     }
 
     getPhotos() {
-        API.getPhotos().then(resp => this.photos = resp.results);
+        API.getPhotos().then(photos => {
+            if (photos !== null) {
+                this.photos = photos
+            }
+        });
     }
 }
 
