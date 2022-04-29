@@ -1,0 +1,10 @@
+.photo {
+    margin-bottom: 20px;
+}
+
+.photo-placeholder {
+    background-color: #AAA;
+    width: 800px;
+    height: 1200px;
+    border-radius: 10px;
+}
