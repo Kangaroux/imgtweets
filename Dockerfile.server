@@ -1,0 +1,11 @@
+FROM python:3.10-alpine
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY server/ ./
+WORKDIR /app/server
+
+CMD ./manage.py migrate && ./manage.py runserver 0.0.0.0:8000
