@@ -12,6 +12,7 @@ class TwitterUserSerializer(serializers.ModelSerializer):
 class PhotoSerializer(serializers.ModelSerializer):
     # Rename the `user` field to `user_id`
     user_id = serializers.IntegerField(source="user.id")
+    tweet_url = serializers.CharField()
 
     class Meta:
         model = Photo
