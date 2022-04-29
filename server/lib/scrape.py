@@ -36,7 +36,11 @@ class Scraper:
             user = TwitterUser.objects.get(twitter_id=u.id)
             logger.debug("Fetched existing user")
         except TwitterUser.DoesNotExist:
-            user = TwitterUser.objects.create(twitter_id=u.id, username=u.username)
+            user = TwitterUser.objects.create(
+                profile_image_url=u.profile_image_url,
+                twitter_id=u.id,
+                username=u.username,
+            )
             logger.debug("Created new user")
 
         images = []
@@ -52,6 +56,7 @@ class Scraper:
                         tweet_id=t.tweet_id,
                         url=m.url,
                         user=user,
+                        tweeted_at=t.created_at,
                     )
                 )
 

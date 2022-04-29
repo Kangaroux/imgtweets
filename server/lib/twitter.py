@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 from enum import Enum
 from typing import Dict, List
 
@@ -28,6 +29,7 @@ class TwitterUser:
     id: str
     name: str
     username: str
+    profile_image_url: str
 
 
 @dataclass
@@ -39,6 +41,7 @@ class TwitterMedia:
 
 @dataclass
 class TwitterMediaTweet:
+    created_at: datetime
     media: List[TwitterMedia]
     tweet_id: str
     user_id: str
@@ -62,12 +65,23 @@ class TwitterAPI:
         """
         https://developer.twitter.com/en/docs/twitter-api/users/lookup/api-reference/get-users-by-username-username
         """
-        resp = self.session.get(self.BASE_PATH + f"/users/by/username/{username}")
+        params = {
+            "user.fields": "profile_image_url",
+        }
+        resp = self.session.get(
+            self.BASE_PATH + f"/users/by/username/{username}",
+            params=params,
+        )
         self._handle_errors(resp)
 
         data = resp.json()["data"]
 
-        return TwitterUser(id=data["id"], name=data["name"], username=data["username"])
+        return TwitterUser(
+            id=data["id"],
+            name=data["name"],
+            username=data["username"],
+            profile_image_url=data["profile_image_url"],
+        )
 
     def get_user_media_tweets(
         self, user_id: str, limit=10, pagination_token: str = None
@@ -85,6 +99,7 @@ class TwitterAPI:
             "expansions": "attachments.media_keys",
             "media.fields": "type,url",
             "max_results": limit,
+            "tweet.fields": "created_at",
         }
 
         if pagination_token:
@@ -115,11 +130,17 @@ class TwitterAPI:
             if not media_keys:
                 continue
 
+            # API returns a date time string like "2022-04-26T22:32:33.000Z"
+            # This strips the ".000Z" suffix
+            created_at_str = data["created_at"].split(".")[0]
+            created_at = datetime.strptime(created_at_str, "%Y-%m-%dT%H:%M:%S")
+
             tweets.append(
                 TwitterMediaTweet(
                     media=[media[key] for key in media_keys],
                     user_id=user_id,
                     tweet_id=data["id"],
+                    created_at=created_at,
                 )
             )
 

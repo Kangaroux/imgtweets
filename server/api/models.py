@@ -10,6 +10,7 @@ class BaseModel(models.Model):
 
 
 class TwitterUser(BaseModel):
+    profile_image_url = models.CharField(max_length=255)
     twitter_id = models.CharField(max_length=20, unique=True)
 
     # Usernames can change, so if possible avoid using this as the lookup
@@ -26,6 +27,7 @@ class Image(BaseModel):
     url = models.CharField(max_length=255)
     user = models.ForeignKey(TwitterUser, on_delete=models.CASCADE)
     tweet_id = models.CharField(max_length=20)
+    tweeted_at = models.DateTimeField()
 
     @property
     def tweet_url(self):
