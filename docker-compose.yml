@@ -4,7 +4,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.server
-    ports:
-      - "8000:8000"
     volumes:
       - "./server/:/app/server/"
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    ports:
+      - "80:80"
+    volumes:
+      - "./frontend/dist/:/app/:ro"
