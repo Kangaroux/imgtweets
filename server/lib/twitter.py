@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Dict, List
 
@@ -134,6 +134,7 @@ class TwitterAPI:
             # This strips the ".000Z" suffix
             created_at_str = data["created_at"].split(".")[0]
             created_at = datetime.strptime(created_at_str, "%Y-%m-%dT%H:%M:%S")
+            created_at = created_at.astimezone(timezone.utc)
 
             tweets.append(
                 TwitterMediaTweet(
@@ -165,9 +166,6 @@ class TwitterAPI:
                 break
 
             limit -= self.MAX_RESULTS_LIMIT
-
-            print("fetched")
-            input()
 
         return results
 

@@ -16,6 +16,7 @@ export interface Image {
     key: string;
     url: string;
     tweetId: string;
+    tweetedAt: string;
 }
 
 export async function getImages(): Promise<Image[] | null> {
@@ -39,6 +40,7 @@ export async function getImages(): Promise<Image[] | null> {
             key: p.key,
             url: p.url,
             tweetId: p.tweet_id,
+            tweetedAt: p.tweeted_at,
         })
     }
 

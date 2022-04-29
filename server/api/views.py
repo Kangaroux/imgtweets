@@ -57,7 +57,7 @@ class ImageAPI(ReadOnlyModelViewSet):
     serializer_class = ImageSerializer
     filter_backends = [ImageUsernameFilter, OrderingFilter]
     ordering_fields = "__all__"
-    ordering = ["-tweet_id"]
+    ordering = ["-tweeted_at"]
 
 
 class TwitterUserAPI(RetrieveMultipleMixin, ReadOnlyModelViewSet):
