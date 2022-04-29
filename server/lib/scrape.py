@@ -11,21 +11,19 @@ logger = logging.getLogger(__name__)
 class Scraper:
     api: TwitterAPI
 
-    MAX_SCRAPE_COUNT = 100
-
     def __init__(self, token: str):
         self.api = TwitterAPI(token)
 
     def scrape_timeline(self, username: str, count: int):
         if not username:
             raise ValueError("Username cannot be empty.")
-        elif count < 1 or count > 100:
-            raise ValueError(f"Count must be between [1, {self.MAX_SCRAPE_COUNT}].")
+        elif count < TwitterAPI.MIN_RESULTS_LIMIT:
+            raise ValueError(f"Count must be at least 1.")
 
         logger.info(f"Starting to scrape timeline for user '{username}'")
 
         u = self.api.get_user_by_username(username)
-        tweets, _ = self.api.get_user_media_tweets(u.id, limit=count)
+        tweets = self.api.get_user_media_tweets_auto_paginate(u.id, limit=count)
 
         logger.debug(f"Found {len(tweets)} tweets")
 

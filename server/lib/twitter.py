@@ -49,6 +49,8 @@ class TwitterAPI:
     session: requests.Session
 
     BASE_PATH = "https://api.twitter.com/2"
+    MAX_RESULTS_LIMIT = 100
+    MIN_RESULTS_LIMIT = 5
 
     def __init__(self, bearer_token: str):
         self.bearer_token = bearer_token
@@ -73,6 +75,11 @@ class TwitterAPI:
         """
         https://developer.twitter.com/en/docs/twitter-api/tweets/timelines/api-reference/get-users-id-tweets
         """
+        if limit < self.MIN_RESULTS_LIMIT or limit > self.MAX_RESULTS_LIMIT:
+            raise ValueError(
+                f"Limit must be between [{self.MIN_RESULTS_LIMIT}, {self.MAX_RESULTS_LIMIT}]"
+            )
+
         params = {
             "exclude": "retweets,replies",
             "expansions": "attachments.media_keys",
@@ -116,9 +123,32 @@ class TwitterAPI:
                 )
             )
 
-        pagination_token = resp.json()["meta"]["next_token"]
+        pagination_token = resp.json()["meta"].get("next_token")
 
         return (tweets, pagination_token)
+
+    def get_user_media_tweets_auto_paginate(self, user_id: str, limit=10):
+        results: List[TwitterMediaTweet] = []
+        pagination_token: str = None
+
+        while limit > 0:
+            tweets, pagination_token = self.get_user_media_tweets(
+                user_id=user_id,
+                limit=min(limit, self.MAX_RESULTS_LIMIT),
+                pagination_token=pagination_token,
+            )
+
+            results.extend(tweets)
+
+            if not pagination_token:
+                break
+
+            limit -= self.MAX_RESULTS_LIMIT
+
+            print("fetched")
+            input()
+
+        return results
 
     def _handle_errors(self, resp: requests.Response):
         if resp.status_code == 429:
