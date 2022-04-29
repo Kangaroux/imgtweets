@@ -3,6 +3,7 @@ import * as API from "./api";
 
 class Store {
     images?: API.Image[];
+    fetching = false;
 
     constructor() {
         makeAutoObservable(this, {
@@ -11,11 +12,13 @@ class Store {
     }
 
     getImages() {
+        this.fetching = true;
+
         API.getImages().then(images => {
             if (images !== null) {
-                this.images = images
+                this.images = images;
             }
-        });
+        }).finally(() => this.fetching = false);
     }
 }
 

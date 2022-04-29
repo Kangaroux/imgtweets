@@ -4,7 +4,7 @@ import { ScrollContainer } from "./ScrollContainer";
 
 export const App = observer(() => {
     // Fetch some images if we haven't yet
-    if (store.images == null) {
+    if (store.images == null && !store.fetching) {
         store.getImages();
     }
 
