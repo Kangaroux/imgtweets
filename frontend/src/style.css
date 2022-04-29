@@ -3,4 +3,8 @@
 body {
     font-family: "Sans Serif";
     font-size: 16px;
+
+    /* Dark mode */
+    background-color: #202020;
+    color: #FFF;
 }

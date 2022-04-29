@@ -13,5 +13,4 @@ export function getPhotos() {
                 resolve(resp.json());
             }).catch(reject);
     });
-
 }

@@ -1,6 +1,4 @@
 import { h, render } from "preact";
-import { getPhotos } from "./api";
+import { App } from "./components/App";
 
-render(<h1>Hello world!</h1>, document.getElementById("root"));
-
-getPhotos().then(r => console.log(r));
+render(<App />, document.getElementById("root"));
