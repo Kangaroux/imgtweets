@@ -12,5 +12,3 @@ services:
       dockerfile: Dockerfile.nginx
     ports:
       - "80:80"
-    volumes:
-      - "./frontend/dist/:/app/:ro"

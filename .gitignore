@@ -3,6 +3,7 @@
 *.sqlite3
 
 frontend/dist/
+server/static/
 
 __pycache__/
 node_modules/
