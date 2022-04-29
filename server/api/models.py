@@ -25,6 +25,11 @@ class Photo(BaseModel):
     key = models.CharField(max_length=50, unique=True)
     url = models.CharField(max_length=255)
     user = models.ForeignKey(TwitterUser, on_delete=models.CASCADE)
+    tweet_id = models.CharField(max_length=20)
+
+    @property
+    def tweet_url(self):
+        return f"https://twitter.com/{self.user.username}/status/{self.tweet_id}"
 
     def __str__(self):
         return f"{self.user.username}({self.key})"
