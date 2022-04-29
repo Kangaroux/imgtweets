@@ -2,5 +2,8 @@
 *.pyc
 *.sqlite3
 
+frontend/dist/
+
 __pycache__/
+node_modules/
 venv/
