@@ -1,8 +1,7 @@
-import { h } from "preact";
-import { observable } from "mobx-preact";
+import { observer } from "mobx-react-lite";
 import { store } from "../store";
 
-export const App = observable(() => {
+export const App = observer(() => {
     return (
         <div>
             <button onClick={() => store.getPhotos()}>Refresh</button>

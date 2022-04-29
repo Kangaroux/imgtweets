@@ -1,4 +1,4 @@
-import { action, makeAutoObservable } from "mobx-preact";
+import { action, makeAutoObservable } from "mobx";
 import * as API from "./api";
 
 class Store {
