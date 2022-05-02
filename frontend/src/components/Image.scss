@@ -1,0 +1,16 @@
+.image {
+    margin-bottom: 20px;
+
+    img,
+    .image-placeholder {
+        display: block;
+        margin: 0 auto;
+    }
+
+    .image-placeholder {
+        background-color: #AAA;
+        width: 800px;
+        height: 1200px;
+        border-radius: 10px;
+    }
+}

@@ -1,9 +1,0 @@
-.scroll-container {
-    text-align: center;
-    line-height: 0;
-}
-
-.scroll-container * {
-    line-height: initial;
-    max-width: 100%;
-}

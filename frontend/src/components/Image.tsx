@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useRef, useState } from "react";
 import * as API from "../api";
-import "./Image.css";
+import "./Image.scss";
 
 // This margin is the distance between an off-screen image and the viewport.
 // Images that come within this distance will be preloaded
