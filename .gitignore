@@ -2,6 +2,7 @@
 *.pyc
 *.sqlite3
 
+dist/
 frontend/build/
 server/static/
 

@@ -2,9 +2,5 @@ FROM nginx:alpine
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-WORKDIR /app/static
-COPY frontend/dist/ ./
-COPY server/static/ ./
-
 WORKDIR /app
-RUN mv static/index.html .
+COPY dist/ ./
