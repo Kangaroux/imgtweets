@@ -1,16 +1,16 @@
 import { observer } from "mobx-react-lite";
 import { store } from "../store";
 import { ScrollContainer } from "./ScrollContainer";
+import { Sidebar } from "./Sidebar";
 
 export const App = observer(() => {
-    // Fetch some images if we haven't yet
-    if (store.images == null && !store.fetching) {
+    if (store.images == null) {
         store.getImages();
     }
 
     return (
         <div>
-            <button onClick={() => store.getImages()}>Refresh</button>
+            <Sidebar />
             <ScrollContainer images={store.images} />
         </div>
     );

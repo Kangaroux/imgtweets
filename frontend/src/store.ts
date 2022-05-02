@@ -11,7 +11,11 @@ class Store {
         });
     }
 
-    getImages() {
+    getImages(force = false) {
+        if (this.fetching && !force) {
+            return;
+        }
+
         this.fetching = true;
 
         API.getImages().then(images => {

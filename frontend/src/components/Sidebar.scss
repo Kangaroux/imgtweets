@@ -1,0 +1,28 @@
+@use "../icons";
+
+.sidebar {
+    position: fixed;
+    height: 100vh;
+    background-color: #111;
+
+    width: 64px;
+    transition: width 0.6s;
+}
+
+.sidebar-open {
+    width: 400px;
+}
+
+.sidebar-container {
+    position: relative;
+}
+
+.sidebar-menu-btn {
+    @extend .mui-icon;
+    background: none;
+    border: none;
+    color: #CCC;
+    font-size: 40px;
+    cursor: pointer;
+    margin: 8px;
+}
