@@ -2,7 +2,7 @@
 *.pyc
 *.sqlite3
 
-frontend/dist/
+frontend/build/
 server/static/
 
 __pycache__/
