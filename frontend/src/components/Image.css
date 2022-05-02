@@ -2,6 +2,12 @@
     margin-bottom: 20px;
 }
 
+.image img,
+.image .image-placeholder {
+    display: block;
+    margin: 0 auto;
+}
+
 .image-placeholder {
     background-color: #AAA;
     width: 800px;

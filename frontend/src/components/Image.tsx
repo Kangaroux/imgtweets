@@ -53,10 +53,9 @@ export const Image = observer(({ image }: Props) => {
         return cleanUp;
     }, [ref.current]);
 
-    if (loaded) {
-        return <div className="image"><img src={image.url} /></div>;
-    } else {
-        // TODO: If `visible` is true, we could do a loading animation
-        return <div className="image image-placeholder" ref={ref}></div>;
-    }
+    return (
+        <div className="image" ref={ref}>
+            {loaded ? <img src={image.url} /> : <div className="image-placeholder" />}
+        </div>
+    );
 });
