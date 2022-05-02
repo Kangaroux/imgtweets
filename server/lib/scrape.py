@@ -1,6 +1,7 @@
 import logging
 
 from django.db import IntegrityError
+from django.utils import timezone
 
 from api.models import Image, TwitterUser
 from lib.twitter import TwitterAPI, TwitterMediaType
@@ -72,4 +73,8 @@ class Scraper:
                 pass
 
         logger.debug(f"Added {added} new images")
+
+        user.last_scraped_at = timezone.now()
+        user.save()
+
         logger.info("Finished scraping")

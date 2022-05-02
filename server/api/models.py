@@ -2,14 +2,15 @@ from django.db import models
 
 
 class BaseModel(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
-    updated_at = models.DateTimeField(auto_now=True, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         abstract = True
 
 
 class TwitterUser(BaseModel):
+    last_scraped_at = models.DateTimeField(null=True)
     profile_image_url = models.CharField(max_length=255)
     twitter_id = models.CharField(max_length=20, unique=True)
 
