@@ -12,6 +12,18 @@ def getenv_or_fail(key: str):
     return val
 
 
+# Nginx is handling Host validation
+ALLOWED_HOSTS = ["*"]
 DEBUG = False
 SECRET_KEY = getenv_or_fail("SECRET_KEY")
-ALLOWED_HOSTS = ["*"]
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": getenv_or_fail("POSTGRES_DB"),
+        "USER": getenv_or_fail("POSTGRES_USER"),
+        "PASSWORD": getenv_or_fail("POSTGRES_PASSWORD"),
+        "HOST": getenv_or_fail("POSTGRES_HOST"),
+        "PORT": getenv_or_fail("POSTGRES_PORT"),
+    }
+}

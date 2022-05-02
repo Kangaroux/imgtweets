@@ -1,5 +1,7 @@
 FROM python:3.10-alpine
 
+ENV DJANGO_SETTINGS_MODULE=settings.settings_prod
+
 WORKDIR /app
 
 COPY requirements.txt .
