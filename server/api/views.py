@@ -1,11 +1,23 @@
+import logging
+import math
+from datetime import timedelta
+from django.conf import settings
+
+from django.utils import timezone
+from rest_framework.decorators import action
+from rest_framework.exceptions import APIException, NotFound, Throttled, ValidationError
 from rest_framework.filters import BaseFilterBackend, OrderingFilter
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
-from rest_framework.exceptions import ValidationError
 
 from api.models import Image, TwitterUser
 from api.serializers import ImageSerializer, TwitterUserSerializer
+from lib.twitter import TwitterErrorNotFound, TwitterRateLimit
+from lib.scrape import Scraper
+
+
+logger = logging.getLogger(__name__)
 
 
 class ImageUsernameFilter(BaseFilterBackend):
@@ -66,11 +78,77 @@ class RetrieveMultipleMixin(RetrieveModelMixin):
 
 
 class ImageAPI(ReadOnlyModelViewSet):
+    # The amount of time before another fetch request can be made for the same user
+    FETCH_COOLDOWN = timedelta(minutes=30)
+    RESCRAPE_COUNT = 100
+    FIRST_SCRAPE_COUNT = 500
+
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
     filter_backends = [ImageUsernameFilter, OrderingFilter]
     ordering_fields = "__all__"
     ordering = ["-tweeted_at"]
+
+    @action(detail=False)
+    def fetch(self, request, pk=None):
+        username = request.query_params.get("username", "").strip()
+
+        if not username:
+            raise ValidationError(
+                {"username": "username query param is missing or empty"}
+            )
+
+        user: TwitterUser = None
+
+        try:
+            user = TwitterUser.objects.get(username__iexact=username)
+        except TwitterUser.DoesNotExist:
+            pass
+
+        if user and user.last_scraped_at:
+            diff: timedelta = timezone.now() - user.last_scraped_at
+            remaining = self.FETCH_COOLDOWN - diff
+            sec = math.ceil(remaining.total_seconds())
+
+            if sec > 0:
+                msg = (
+                    f"The last fetch was too recent. Please wait {sec} seconds "
+                    "before trying again."
+                )
+
+                return Response(
+                    {"message": msg}, status=429, headers={"Retry-After": sec}
+                )
+
+        count = self.RESCRAPE_COUNT
+
+        # Increase the count if the user has never been scraped before
+        if not user.last_scraped_at:
+            count = self.FIRST_SCRAPE_COUNT
+
+        scraper = Scraper(settings.TWITTER_API_TOKEN)
+
+        try:
+            tweet_count, image_count, added_count = scraper.scrape_timeline(
+                username, count
+            )
+        except TwitterErrorNotFound:
+            raise NotFound("Unable to find a user with that username.")
+        except TwitterRateLimit:
+            raise Throttled(
+                detail="Too many requests, please try again in a few minutes."
+            )
+        except:
+            logger.exception("Unexpected error trying to scrape user timeline")
+            raise APIException()
+
+        return Response(
+            {
+                "tweet_count": tweet_count,
+                "total_images": image_count,
+                "total_new_images": added_count,
+            }
+        )
 
 
 class TwitterUserAPI(RetrieveMultipleMixin, ReadOnlyModelViewSet):

@@ -16,21 +16,22 @@ class Scraper:
         self.api = TwitterAPI(token)
 
     def scrape_timeline(self, username: str, count: int):
+        """
+        Scrapes a user's timeline for images and adds them to the database.
+
+        Returns a 3-tuple with some stats from the scrape:
+
+            - The number of tweets retrieved
+            - The number of images found
+            - The number of images that were missing and added to the database
+        """
         if not username:
             raise ValueError("Username cannot be empty.")
         elif count < TwitterAPI.MIN_RESULTS_LIMIT:
             raise ValueError(f"Count must be at least 1.")
 
         logger.info(f"Starting to scrape timeline for user '{username}'")
-
         u = self.api.get_user_by_username(username)
-        tweets = self.api.get_user_media_tweets_auto_paginate(u.id, limit=count)
-
-        logger.debug(f"Found {len(tweets)} tweets")
-
-        if not tweets:
-            return
-
         logger.debug("Lookup user in DB")
 
         try:
@@ -43,6 +44,16 @@ class Scraper:
                 username=u.username,
             )
             logger.debug("Created new user")
+
+        # Set this early to try and mitigate simultaneous fetch requests
+        user.last_scraped_at = timezone.now()
+        user.save()
+
+        tweets = self.api.get_user_media_tweets_auto_paginate(u.id, limit=count)
+        logger.debug(f"Found {len(tweets)} tweets")
+
+        if not tweets:
+            return
 
         images = []
 
@@ -73,8 +84,6 @@ class Scraper:
                 pass
 
         logger.debug(f"Added {added} new images")
-
-        user.last_scraped_at = timezone.now()
-        user.save()
-
         logger.info("Finished scraping")
+
+        return (len(tweets), len(images), added)
