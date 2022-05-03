@@ -2,6 +2,7 @@ from rest_framework.filters import BaseFilterBackend, OrderingFilter
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.exceptions import ValidationError
 
 from api.models import Image, TwitterUser
 from api.serializers import ImageSerializer, TwitterUserSerializer
@@ -9,15 +10,27 @@ from api.serializers import ImageSerializer, TwitterUserSerializer
 
 class ImageUsernameFilter(BaseFilterBackend):
     """
-    Filter that allows searching for images from a specific username.
-    Expects a "username" query param. The query is case insensitive and
-    does a partial match.
+    This filter allows the client to filter which images to return based on
+    the user's username.
+
+    The client can specify at most query param:
+
+        - `username`: Case insensitive exact match
+        - `username_like`: Case insensitive contains/includes
     """
 
     def filter_queryset(self, request, queryset, view):
         username = request.query_params.get("username", "").strip()
+        username_like = request.query_params.get("username_like", "").strip()
+
+        if username and username_like:
+            raise ValidationError(
+                "username and username_like query params are mutually exclusive"
+            )
 
         if username:
+            queryset = queryset.filter(user__username__iexact=username)
+        elif username_like:
             queryset = queryset.filter(user__username__icontains=username)
 
         return queryset
