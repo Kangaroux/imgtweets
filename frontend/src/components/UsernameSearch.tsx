@@ -15,14 +15,21 @@ export const UsernameSearch = observer((props: UsernameSearchProps) => {
         setVal(e.currentTarget.value);
     }
 
+    const onPickUser = (user: API.User) => {
+        store.setCurrentImagesToUser(user.username);
+        setVal("");
+    }
+
     let users: API.User[] = [];
 
-    if (val && store.users != null) {
+    if (val && store.data.length) {
         const lowerVal = val.toLowerCase();
 
-        users = store.users.filter((u) =>
-            u.username.toLowerCase().includes(lowerVal)
-        );
+        store.data.forEach(data => {
+            if (data.user.username.toLowerCase().includes(lowerVal)) {
+                users.push(data.user);
+            }
+        })
     }
 
     let results = null;
@@ -32,7 +39,7 @@ export const UsernameSearch = observer((props: UsernameSearchProps) => {
             <li>
                 {users && users.map(u => {
                     return (
-                        <ul>
+                        <ul onClick={() => onPickUser(u)}>
                             <img src={u.profileImageUrl} /> <span>{u.username}</span>
                         </ul>
                     );

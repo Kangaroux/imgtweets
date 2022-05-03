@@ -6,7 +6,6 @@ import { store } from './store';
 
 async function initStore() {
     await store.getUsers();
-    await store.getImages();
     console.debug("initialized store");
 }
 

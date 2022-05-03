@@ -7,7 +7,7 @@ export const App = observer(() => {
     return (
         <div>
             <Sidebar />
-            <ScrollContainer images={store.images} />
+            <ScrollContainer images={store.currentImages} />
         </div>
     );
 });

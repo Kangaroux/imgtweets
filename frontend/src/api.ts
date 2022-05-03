@@ -31,8 +31,29 @@ export interface User {
     username: string;
 }
 
-export async function getImages(): Promise<Image[] | null> {
-    const resp = await fetch(basePath + "/images");
+export interface GetImagesOptions {
+    username?: string;
+    exactMatch?: boolean;
+}
+
+interface getImagesQueryParams {
+    username?: string;
+    username_like?: string;
+}
+
+export async function getImages(options: GetImagesOptions = {}): Promise<Image[] | null> {
+    const params: getImagesQueryParams = {};
+
+    if (options.username) {
+        if (options.exactMatch) {
+            params.username = options.username;
+        } else {
+            params.username_like = options.username;
+        }
+    }
+
+    const qs = "?" + new URLSearchParams(params as Record<string, string>).toString();
+    const resp = await fetch(basePath + "/images" + qs);
 
     if (!resp.ok) {
         console.error(resp);
