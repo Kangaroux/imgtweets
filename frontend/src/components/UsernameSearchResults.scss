@@ -1,0 +1,32 @@
+.search-results {
+    list-style: none;
+    background-color: #222;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    color: #DDD;
+    line-height: 0;
+
+    filter: brightness(80%);
+
+    &:hover {
+        filter: brightness(100%);
+    }
+
+    li {
+        padding: 15px;
+    }
+
+    img {
+        width: 32px;
+    }
+
+    span {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        margin-left: 20px;
+        font-weight: bold;
+    }
+}

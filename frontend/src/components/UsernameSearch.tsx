@@ -2,41 +2,20 @@ import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 import { store } from "../store";
 import * as API from "../api";
+import { UsernameSearchResults } from "./UsernameSearchResults";
 import "./UsernameSearch.scss";
 
-export interface UsernameSearchProps {
+export interface Props {
     onChange?(val: string): void;
 }
 
-export const UsernameSearch = observer((props: UsernameSearchProps) => {
+export const UsernameSearch = observer((props: Props) => {
+    const [results, setResults] = useState<API.User[]>([]);
     const [val, setVal] = useState("");
 
-    let users: API.User[] = [];
-
-    if (val && store.data.length) {
-        const lowerVal = val.toLowerCase();
-
-        store.data.forEach(data => {
-            if (data.user.username.toLowerCase().includes(lowerVal)) {
-                users.push(data.user);
-            }
-        })
-    }
-
-    let results = null;
-
-    if (users.length) {
-        results = (
-            <ul>
-                {users && users.map(u => {
-                    return (
-                        <li onClick={() => onPickUser(u)}>
-                            <img src={u.profileImageUrl} /> <span>{u.username}</span>
-                        </li>
-                    );
-                })}
-            </ul>
-        );
+    const onPickUser = (user: API.User) => {
+        store.setCurrentImagesToUser(user.username);
+        setVal("");
     }
 
     const onChange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -47,14 +26,9 @@ export const UsernameSearch = observer((props: UsernameSearchProps) => {
     const onSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (users.length) {
-            onPickUser(users[0]);
+        if (results.length) {
+            onPickUser(results[0]);
         }
-    }
-
-    const onPickUser = (user: API.User) => {
-        store.setCurrentImagesToUser(user.username);
-        setVal("");
     }
 
     return (
@@ -67,7 +41,12 @@ export const UsernameSearch = observer((props: UsernameSearchProps) => {
                     value={val}
                 />
             </form>
-            {results}
+            <UsernameSearchResults
+                onSelect={onPickUser}
+                setResults={setResults}
+                results={results}
+                search={val}
+            />
         </div>
     );
 });
