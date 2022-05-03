@@ -15,7 +15,6 @@ export const UsernameSearch = observer((props: Props) => {
     const onPickUser = (user: API.User) => {
         if (store.usernameSearchResults.length === 0) {
             onPickNewUser(val);
-            setVal("");
         } else {
             store.setCurrentImagesToUser(user.username);
             setVal("");
@@ -29,6 +28,7 @@ export const UsernameSearch = observer((props: Props) => {
         };
 
         fn(username);
+        setVal("");
     }
 
     const onChange = (e: React.FormEvent<HTMLInputElement>) => {
