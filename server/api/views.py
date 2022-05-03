@@ -11,6 +11,7 @@ from lib.twitter import TwitterErrorNotFound, TwitterRateLimit
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, NotFound, Throttled, ValidationError
 from rest_framework.filters import BaseFilterBackend, OrderingFilter
+from rest_framework.generics import get_object_or_404
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
@@ -121,7 +122,7 @@ class ImageAPI(ReadOnlyModelViewSet):
         count = self.RESCRAPE_COUNT
 
         # Increase the count if the user has never been scraped before
-        if not user.last_scraped_at:
+        if user and not user.last_scraped_at:
             count = self.FIRST_SCRAPE_COUNT
 
         scraper = Scraper(settings.TWITTER_API_TOKEN)
@@ -155,3 +156,15 @@ class TwitterUserAPI(RetrieveMultipleMixin, ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return TwitterUser.objects.all().order_by("id")
+
+    def list(self, request, *args, **kwargs):
+        username = request.query_params.get("username", "").strip()
+
+        if username:
+            user = get_object_or_404(
+                TwitterUser.objects.filter(username__iexact=username)
+            )
+            serializer = TwitterUserSerializer(user)
+            return Response(serializer.data)
+
+        return super().list(request, *args, **kwargs)
