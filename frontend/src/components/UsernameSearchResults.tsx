@@ -5,12 +5,13 @@ import { store } from "../store";
 import "./UsernameSearchResults.scss";
 
 export interface Props {
+    onNewUser(username: string): void;
     onSelect(user: API.User): void;
     search: string;
 }
 
 export const UsernameSearchResults = observer((props: Props) => {
-    const { onSelect, search } = props;
+    const { onNewUser, onSelect, search } = props;
     const results = store.usernameSearchResults;
 
     useEffect(() => {
@@ -41,6 +42,14 @@ export const UsernameSearchResults = observer((props: Props) => {
                     </li>
                 );
             })}
+            {
+                search && (
+                    <li onClick={() => onNewUser(search)}>
+                        <img src="https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png" /> <span>{search}</span>
+                    </li>
+                )
+            }
+
         </ul>
     );
 });

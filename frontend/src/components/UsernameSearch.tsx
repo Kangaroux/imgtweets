@@ -13,12 +13,27 @@ export const UsernameSearch = observer((props: Props) => {
     const [val, setVal] = useState("");
 
     const onPickUser = (user: API.User) => {
-        store.setCurrentImagesToUser(user.username);
-        setVal("");
+        if (store.usernameSearchResults.length === 0) {
+            onPickNewUser(val);
+            setVal("");
+        } else {
+            store.setCurrentImagesToUser(user.username);
+            setVal("");
+        }
+    }
+
+    const onPickNewUser = (username: string) => {
+        const fn = async (username: string) => {
+            await store.scrapeImages(username);
+            await store.setCurrentImagesToUser(username);
+        };
+
+        fn(username);
     }
 
     const onChange = (e: React.FormEvent<HTMLInputElement>) => {
-        setVal(e.currentTarget.value);
+        const cleaned = e.currentTarget.value.replace(/[^A-Za-z0-9_]/, "");
+        setVal(cleaned);
     }
 
     // Select the first user in the result if the user pressed enter
@@ -39,10 +54,12 @@ export const UsernameSearch = observer((props: Props) => {
                     type="text"
                     placeholder="Search by username"
                     onInput={onChange}
+                    maxLength={15}
                     value={val}
                 />
             </form>
             <UsernameSearchResults
+                onNewUser={onPickNewUser}
                 onSelect={onPickUser}
                 search={val}
             />

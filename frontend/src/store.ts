@@ -1,4 +1,4 @@
-import { action, makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable } from "mobx";
 import * as API from "./api";
 
 export interface UserImages {
@@ -22,6 +22,7 @@ class Store {
 
     // Which APIs are currently in use
     fetching = {
+        scraping: false,
         images: false,
         users: false,
     };
@@ -55,12 +56,32 @@ class Store {
         }
     }
 
+    setScraping(isScraping: boolean) {
+        this.fetching.scraping = isScraping;
+    }
+
     setFetchingImages(isFetching: boolean) {
         this.fetching.images = isFetching;
     }
 
     setFetchingUsers(isFetching: boolean) {
         this.fetching.users = isFetching;
+    }
+
+    async scrapeImages(username: string, force = false) {
+        if (this.fetching.scraping && !force) {
+            return;
+        }
+
+        this.setScraping(true);
+
+        try {
+            await API.scrapeUserImages(username);
+            await this.getUser(username);
+            await this.getImages({ username, exactMatch: true });
+        } finally {
+            this.setScraping(false);
+        }
     }
 
     async getImages(options: API.GetImagesOptions = {}, force = false) {
@@ -72,12 +93,24 @@ class Store {
 
         try {
             const images = await API.getImages(options);
-
-            if (images !== null) {
-                this.addImages(images);
-            }
+            this.addImages(images);
         } finally {
             this.setFetchingImages(false);
+        }
+    }
+
+    async getUser(username: string, force = false) {
+        if (this.fetching.users && !force) {
+            return;
+        }
+
+        this.setFetchingUsers(true);
+
+        try {
+            const user = await API.getUser(username);
+            this.addUser(user);
+        } finally {
+            this.setFetchingUsers(false);
         }
     }
 
@@ -91,10 +124,8 @@ class Store {
         try {
             const users = await API.getUsers();
 
-            if (users !== null) {
-                for (const u of users) {
-                    this.addUser(u);
-                }
+            for (const u of users) {
+                this.addUser(u);
             }
         } finally {
             this.setFetchingUsers(false);
