@@ -11,10 +11,11 @@
     }
 
     ul {
+        list-style: none;
         background-color: #222;
         position: relative;
         margin: 0;
-        padding: 15px;
+        padding: 0;
         cursor: pointer;
         color: #DDD;
         line-height: 0;
@@ -23,6 +24,10 @@
 
         &:hover {
             filter: brightness(100%);
+        }
+
+        li {
+            padding: 15px;
         }
 
         img {

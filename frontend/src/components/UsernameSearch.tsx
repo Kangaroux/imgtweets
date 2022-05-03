@@ -36,15 +36,15 @@ export const UsernameSearch = observer((props: UsernameSearchProps) => {
 
     if (users.length) {
         results = (
-            <li>
+            <ul>
                 {users && users.map(u => {
                     return (
-                        <ul onClick={() => onPickUser(u)}>
+                        <li onClick={() => onPickUser(u)}>
                             <img src={u.profileImageUrl} /> <span>{u.username}</span>
-                        </ul>
+                        </li>
                     );
                 })}
-            </li>
+            </ul>
         );
     }
 

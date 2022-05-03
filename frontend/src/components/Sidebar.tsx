@@ -7,12 +7,12 @@ export const Sidebar = observer(() => {
     const [open, setOpen] = useState(true);
 
     let className = "sidebar";
-    let inner;
+    let content;
 
     if (open) {
         className += " sidebar-open";
-        inner = (
-            <div>
+        content = (
+            <div className="sidebar-content">
                 <UsernameSearch />
             </div>
         );
@@ -21,10 +21,12 @@ export const Sidebar = observer(() => {
     return (
         <div className={className}>
             <div className="sidebar-container">
-                <button className="sidebar-menu-btn" onClick={() => setOpen(!open)}>
-                    {open ? "close" : "menu"}
-                </button>
-                {inner}
+                <div className="sidebar-header">
+                    <button className="sidebar-menu-btn" onClick={() => setOpen(!open)}>
+                        {open ? "close" : "menu"}
+                    </button>
+                </div>
+                {content}
             </div>
         </div>
     );
