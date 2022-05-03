@@ -12,5 +12,9 @@ export const ScrollContainer = observer(({ images }: Props) => {
         return null;
     }
 
-    return <div className="scroll-container">{images.map(img => <Image image={img} />)}</div>;
+    return (
+        <div className="scroll-container">
+            {images.map(img => <Image image={img} key={img.id} />)}
+        </div>
+    );
 });

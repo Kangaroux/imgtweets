@@ -9,14 +9,26 @@ interface ListResponse {
 
 export interface Image {
     id: number;
-    userId: number;
-    tweetUrl: string;
     createdAt: string;
     updatedAt: string;
+
     key: string;
-    url: string;
-    tweetId: string;
     tweetedAt: string;
+    tweetId: string;
+    tweetUrl: string;
+    url: string;
+    userId: number;
+}
+
+export interface User {
+    id: number;
+    createdAt: string;
+    updatedAt: string;
+
+    lastScrapedAt: string;
+    profileImageUrl: string;
+    twitterId: string;
+    username: string;
 }
 
 export async function getImages(): Promise<Image[] | null> {
@@ -41,8 +53,34 @@ export async function getImages(): Promise<Image[] | null> {
             url: p.url,
             tweetId: p.tweet_id,
             tweetedAt: p.tweeted_at,
-        })
+        });
     }
 
     return images;
+}
+
+export async function getUsers(): Promise<User[] | null> {
+    const resp = await fetch(basePath + "/users");
+
+    if (!resp.ok) {
+        console.error(resp);
+        return null;
+    }
+
+    const users: User[] = [];
+    const data = await resp.json() as ListResponse;
+
+    for (const u of data.results) {
+        users.push({
+            id: u.id,
+            createdAt: u.created_at,
+            updatedAt: u.updated_at,
+            lastScrapedAt: u.last_scraped_at,
+            profileImageUrl: u.profile_image_url,
+            twitterId: u.twitter_id,
+            username: u.username,
+        });
+    }
+
+    return users;
 }
