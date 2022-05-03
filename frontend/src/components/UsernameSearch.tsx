@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
+import React, { useState } from "react";
 import { store } from "../store";
 import * as API from "../api";
 import "./UsernameSearch.scss";
@@ -10,15 +10,6 @@ export interface UsernameSearchProps {
 
 export const UsernameSearch = observer((props: UsernameSearchProps) => {
     const [val, setVal] = useState("");
-
-    const onChange = (e: React.FormEvent<HTMLInputElement>) => {
-        setVal(e.currentTarget.value);
-    }
-
-    const onPickUser = (user: API.User) => {
-        store.setCurrentImagesToUser(user.username);
-        setVal("");
-    }
 
     let users: API.User[] = [];
 
@@ -48,14 +39,34 @@ export const UsernameSearch = observer((props: UsernameSearchProps) => {
         );
     }
 
+    const onChange = (e: React.FormEvent<HTMLInputElement>) => {
+        setVal(e.currentTarget.value);
+    }
+
+    // Select the first user in the result if the user pressed enter
+    const onSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (users.length) {
+            onPickUser(users[0]);
+        }
+    }
+
+    const onPickUser = (user: API.User) => {
+        store.setCurrentImagesToUser(user.username);
+        setVal("");
+    }
+
     return (
         <div className="username-search">
-            <input
-                type="text"
-                placeholder="Search by username"
-                onInput={onChange}
-                value={val}
-            />
+            <form onSubmit={onSubmit}>
+                <input
+                    type="text"
+                    placeholder="Search by username"
+                    onInput={onChange}
+                    value={val}
+                />
+            </form>
             {results}
         </div>
     );
