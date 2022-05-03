@@ -4,12 +4,17 @@ import './index.scss';
 import { App } from './components/App';
 import { store } from './store';
 
-store.getImages();
-store.getUsers();
+async function initStore() {
+    await store.getUsers();
+    await store.getImages();
+    console.debug("initialized store");
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>
 );
+
+initStore();

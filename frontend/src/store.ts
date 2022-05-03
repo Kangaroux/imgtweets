@@ -1,58 +1,90 @@
 import { action, makeAutoObservable, runInAction } from "mobx";
 import * as API from "./api";
 
+export interface UserImages {
+    images: API.Image[];
+    user: API.User;
+}
+
 class Store {
-    images?: API.Image[];
-    users?: API.User[];
+    data: UserImages[] = [];
+
+    // This set keeps track of all the usernames that are currently loaded in the store.
+    // It functions as a quick lookup to know if we have a user's info or not
+    usernames = new Set<string>();
+
     fetching = {
         images: false,
         users: false,
     };
 
     constructor() {
-        makeAutoObservable(this, {
-            getImages: action,
-            getUsers: action,
-        });
+        makeAutoObservable(this);
     }
 
-    getImages(force = false) {
+    addUser(user: API.User) {
+        if (this.usernames.has(user.username)) {
+            return;
+        }
+
+        this.usernames.add(user.username);
+        this.data.push({ images: [], user });
+    }
+
+    addImages(username: string, images: API.Image[]) {
+        if (!this.usernames.has(username)) {
+            console.warn(`Tried to add images for ${username} but their info hasn't been fetched yet`);
+            return;
+        }
+
+        const user = this.data.find(data => data.user.username === username) as UserImages;
+        user.images = user.images.concat(images);
+    }
+
+    setFetchingImages(isFetching: boolean) {
+        this.fetching.images = isFetching;
+    }
+
+    setFetchingUsers(isFetching: boolean) {
+        this.fetching.users = isFetching;
+    }
+
+    async getImages(force = false) {
         if (this.fetching.images && !force) {
             return;
         }
 
-        this.fetching.images = true;
+        this.setFetchingImages(true);
 
-        API.getImages()
-            .then(images => {
-                if (images !== null) {
-                    runInAction(() => {
-                        this.images = images;
-                    });
-                }
-            }).finally(
-                action(() => this.fetching.images = false)
-            );
+        try {
+            const images = await API.getImages();
+
+            if (images !== null) {
+                this.addImages("todo", images);
+            }
+        } finally {
+            this.setFetchingImages(false);
+        }
     }
 
-    getUsers(force = false) {
+    async getUsers(force = false) {
         if (this.fetching.users && !force) {
             return;
         }
 
-        this.fetching.users = true;
+        this.setFetchingUsers(true);
 
-        API.getUsers()
-            .then(users => {
-                if (users !== null) {
-                    runInAction(() => {
-                        this.users = users;
-                    });
+        try {
+            const users = await API.getUsers();
+
+            if (users !== null) {
+                for (const u of users) {
+                    this.addUser(u);
                 }
-            })
-            .finally(
-                action(() => this.fetching.users = false)
-            );
+            }
+        } finally {
+            this.setFetchingUsers(false);
+        }
     }
 }
 
