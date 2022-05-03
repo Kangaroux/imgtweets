@@ -1,9 +1,8 @@
 import logging
 
+from api.models import Image, TwitterUser
 from django.db import IntegrityError
 from django.utils import timezone
-
-from api.models import Image, TwitterUser
 from lib.twitter import TwitterAPI, TwitterMediaType
 
 logger = logging.getLogger(__name__)

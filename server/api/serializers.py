@@ -1,6 +1,5 @@
-from rest_framework import serializers
-
 from api.models import Image, TwitterUser
+from rest_framework import serializers
 
 
 class TwitterUserSerializer(serializers.ModelSerializer):
