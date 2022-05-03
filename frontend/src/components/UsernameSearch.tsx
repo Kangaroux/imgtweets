@@ -10,7 +10,6 @@ export interface Props {
 }
 
 export const UsernameSearch = observer((props: Props) => {
-    const [results, setResults] = useState<API.User[]>([]);
     const [val, setVal] = useState("");
 
     const onPickUser = (user: API.User) => {
@@ -25,6 +24,8 @@ export const UsernameSearch = observer((props: Props) => {
     // Select the first user in the result if the user pressed enter
     const onSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+
+        const results = store.usernameSearchResults;
 
         if (results.length) {
             onPickUser(results[0]);
@@ -43,8 +44,6 @@ export const UsernameSearch = observer((props: Props) => {
             </form>
             <UsernameSearchResults
                 onSelect={onPickUser}
-                setResults={setResults}
-                results={results}
                 search={val}
             />
         </div>

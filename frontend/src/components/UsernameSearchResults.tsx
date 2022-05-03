@@ -6,14 +6,12 @@ import "./UsernameSearchResults.scss";
 
 export interface Props {
     onSelect(user: API.User): void;
-    setResults(results: API.User[]): void;
-
-    results: API.User[];
     search: string;
 }
 
 export const UsernameSearchResults = observer((props: Props) => {
-    const { onSelect, setResults, results, search } = props;
+    const { onSelect, search } = props;
+    const results = store.usernameSearchResults;
 
     useEffect(() => {
         const users: API.User[] = [];
@@ -28,7 +26,10 @@ export const UsernameSearchResults = observer((props: Props) => {
             });
         }
 
-        setResults(users);
+        store.setUsernameSearchResults(users);
+
+        // Cleanup when the component is destroyed
+        return () => store.setUsernameSearchResults([]);
     }, [search]);
 
     return (

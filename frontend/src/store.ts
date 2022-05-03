@@ -7,14 +7,20 @@ export interface UserImages {
 }
 
 class Store {
+    // All of the user and image data retrieved from the API
     data: UserImages[] = [];
 
     // This set keeps track of all the usernames that are currently loaded in the store.
     // It functions as a quick lookup to know if we have a user's info or not
     usernames = new Set<string>();
 
+    // The images currently being displayed
     currentImages: API.Image[] = [];
 
+    // A list of users matching the username search query
+    usernameSearchResults: API.User[] = [];
+
+    // Which APIs are currently in use
     fetching = {
         images: false,
         users: false,
@@ -113,6 +119,10 @@ class Store {
         }
 
         this.currentImages = user.images!;
+    }
+
+    setUsernameSearchResults(users: API.User[]) {
+        this.usernameSearchResults = users;
     }
 }
 
