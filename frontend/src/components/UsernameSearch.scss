@@ -1,0 +1,42 @@
+.username-search {
+    input {
+        position: relative;
+        width: 100%;
+        background-color: #333;
+        color: #FFF;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #555;
+        z-index: 1;
+    }
+
+    ul {
+        background-color: #222;
+        position: relative;
+        margin: 0;
+        padding: 15px;
+        cursor: pointer;
+        color: #DDD;
+        line-height: 0;
+
+        filter: brightness(80%);
+
+        &:hover {
+            filter: brightness(100%);
+        }
+
+        img {
+            width: 32px;
+        }
+
+        span {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-left: 20px;
+            font-weight: bold;
+        }
+    }
+
+    // background-color: white;
+}
