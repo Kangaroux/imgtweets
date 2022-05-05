@@ -36,7 +36,7 @@ export const UsernameSearchResults = observer((props: Props) => {
 
     return (
         <ul className="search-results">
-            {results &&
+            {!!results &&
                 results.map((u) => {
                     return (
                         <li onClick={() => onSelect(u)}>
@@ -45,7 +45,7 @@ export const UsernameSearchResults = observer((props: Props) => {
                         </li>
                     );
                 })}
-            {search && (
+            {!!search && (
                 <li onClick={() => onNewUser(search)}>
                     <img src="https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png" />{" "}
                     <span>{search}</span>

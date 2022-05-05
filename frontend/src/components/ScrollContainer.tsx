@@ -64,7 +64,7 @@ export const ScrollContainer = observer(({ images }: Props) => {
             {displayedImages.map((img) => (
                 <Image image={img} key={img.id} />
             ))}
-            {displayedImages.length && <span ref={ref} />}
+            {!!displayedImages.length && <span ref={ref} />}
         </div>
     );
 });
