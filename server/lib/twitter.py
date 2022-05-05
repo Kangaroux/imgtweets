@@ -59,7 +59,6 @@ class TwitterAPI:
         self.bearer_token = bearer_token
         self.session = requests.Session()
         self.session.headers["Authorization"] = f"Bearer {bearer_token}"
-        self.session
 
     def get_user_by_username(self, username: str):
         """

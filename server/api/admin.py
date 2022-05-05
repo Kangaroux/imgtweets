@@ -1,5 +1,6 @@
-from api.models import Image, TwitterUser
 from django.contrib import admin
+
+from api.models import Image, TwitterUser
 
 
 @admin.register(Image)
