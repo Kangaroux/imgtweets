@@ -63,6 +63,10 @@ class TwitterAPI:
 
     def get_user_by_username(self, username: str):
         """
+        Uses the Twitter API to retrieve info for the user with the given username.
+
+        Raises `TwitterErrorNotFound` if no user with that username exists.
+
         https://developer.twitter.com/en/docs/twitter-api/users/lookup/api-reference/get-users-by-username-username
         """
         params = {
@@ -84,9 +88,17 @@ class TwitterAPI:
         )
 
     def get_user_media_tweets(
-        self, user_id: str, limit=10, pagination_token: str = None
+        self, twitter_id: str, limit: int, pagination_token: str = None
     ):
         """
+        Uses the Twitter API to retrieve a list of most recent tweets from the user.
+        Any media in the tweets are extracted.
+
+        Returns a 2-tuple (media, token) where:
+            - `media` is a list of the media that was found.
+            - `token` is an optional pagination token that can be used for a future
+              call to `get_user_media_tweets`.
+
         https://developer.twitter.com/en/docs/twitter-api/tweets/timelines/api-reference/get-users-id-tweets
         """
         if limit < self.MIN_RESULTS_LIMIT or limit > self.MAX_RESULTS_LIMIT:
@@ -106,7 +118,7 @@ class TwitterAPI:
             params["pagination_token"] = pagination_token
 
         resp = self.session.get(
-            self.BASE_PATH + f"/users/{user_id}/tweets", params=params
+            self.BASE_PATH + f"/users/{twitter_id}/tweets", params=params
         )
         self._handle_errors(resp)
 
@@ -139,7 +151,7 @@ class TwitterAPI:
             tweets.append(
                 TwitterMediaTweet(
                     media=[media[key] for key in media_keys],
-                    user_id=user_id,
+                    user_id=twitter_id,
                     tweet_id=data["id"],
                     created_at=created_at,
                 )
@@ -149,13 +161,20 @@ class TwitterAPI:
 
         return (tweets, pagination_token)
 
-    def get_user_media_tweets_auto_paginate(self, user_id: str, limit=10):
+    def get_user_media_tweets_auto_paginate(self, twitter_id: str, limit: int):
+        """
+        Helper for calling `get_user_media_tweets` that handles the pagination for you.
+
+        Unlike `get_user_media_tweets` which is limited by `MAX_RESULTS_LIMIT`, this
+        method lets you pass in any limit value. This will automatically stop trying to
+        retrieve more results once all the results have been exhausted.
+        """
         results: List[TwitterMediaTweet] = []
         pagination_token: str = None
 
         while limit > 0:
             tweets, pagination_token = self.get_user_media_tweets(
-                user_id=user_id,
+                twitter_id=twitter_id,
                 limit=min(limit, self.MAX_RESULTS_LIMIT),
                 pagination_token=pagination_token,
             )
@@ -170,6 +189,9 @@ class TwitterAPI:
         return results
 
     def _handle_errors(self, resp: requests.Response):
+        """
+        Raises an error based on the response if needed.
+        """
         if resp.status_code == 429:
             raise TwitterRateLimit(resp.text, resp.headers)
 
