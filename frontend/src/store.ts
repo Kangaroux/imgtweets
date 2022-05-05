@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 
 import * as API from "./api";
 
@@ -6,13 +6,6 @@ export interface UserImages {
     images?: API.Image[];
     user: API.User;
 }
-
-export interface ToastArgs {
-    msg: string;
-    type: "ok" | "error";
-}
-
-export type ToastHandler = (args: ToastArgs) => void;
 
 class Store {
     // All of the user and image data retrieved from the API
@@ -35,34 +28,12 @@ class Store {
         users: false,
     };
 
-    toastListeners: ToastHandler[] = [];
-
     constructor() {
         makeAutoObservable(this);
     }
 
     get usernameList() {
         return Array.from(this.usernames.keys());
-    }
-
-    displayToast(toast: ToastArgs) {
-        for (const handlers of this.toastListeners) {
-            handlers(toast);
-        }
-    }
-
-    addToastHandler(handler: ToastHandler) {
-        this.toastListeners.push(handler);
-    }
-
-    removeToastHandler(handler: ToastHandler) {
-        const i = this.toastListeners.indexOf(handler);
-
-        if (i === -1) {
-            return;
-        }
-
-        this.toastListeners.splice(i, 1);
     }
 
     addUser(user: API.User) {
@@ -196,7 +167,7 @@ class Store {
             });
         }
 
-        this.currentImages = user.images!;
+        runInAction(() => this.currentImages = user.images!);
     }
 
     setUsernameSearchResults(users: API.User[]) {

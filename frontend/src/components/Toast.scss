@@ -1,26 +1,19 @@
-.toast {
-    display: inline-block;
-    position: fixed;
-    bottom: -100px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 20px 30px;
-    z-index: 100;
-    border-radius: 5px;
-    box-shadow: 0 0 10px #000;
+@keyframes toast-up {
+    from {
+        transform: translateY(200px);
+    }
 
-    transition: bottom 0.4s ease-in;
+    to {
+        transform: translateY(0px);
+    }
 }
 
-.toast-show {
-    bottom: 50px;
-    transition: bottom 0.8s;
-}
+@keyframes toast-down {
+    from {
+        transform: translateY(0px);
+    }
 
-.toast-ok {
-    background-color: #008000;
-}
-
-.toast-error {
-    background-color: #911414;
+    to {
+        transform: translateY(200px);
+    }
 }

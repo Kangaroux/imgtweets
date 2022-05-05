@@ -39,7 +39,7 @@ export const UsernameSearchResults = observer((props: Props) => {
             {!!results &&
                 results.map((u) => {
                     return (
-                        <li onClick={() => onSelect(u)}>
+                        <li onClick={() => onSelect(u)} key={u.id}>
                             <img src={u.profileImageUrl} />{" "}
                             <span>{u.username}</span>
                         </li>

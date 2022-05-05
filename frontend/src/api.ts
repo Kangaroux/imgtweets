@@ -1,17 +1,11 @@
-import { store, ToastArgs } from "./store";
+import toast from "react-hot-toast";
 import { fetchWithTimeout } from "./util";
 
 const basePath = "/api";
-const defaultTimeout = 5000;
+const defaultTimeout = 6000;
 
-const UnexpectedErrorToast: ToastArgs = {
-    msg: "An unexpected error occurred.",
-    type: "error",
-};
-const TimeoutToast: ToastArgs = {
-    msg: "The request timed out, did you lose internet?",
-    type: "error",
-};
+const unexpectedErrorToast = "An unexpected error occurred.";
+const timeoutToast = "The request timed out, did you lose internet?";
 
 interface ListResponse {
     count: number;
@@ -56,12 +50,12 @@ export async function scrapeUserImages(username: string) {
         basePath + "/images/fetch?username=" + username,
         {
             timeout: defaultTimeout,
-            onTimeout: () => store.displayToast(TimeoutToast),
+            onTimeout: () => toast.error(timeoutToast),
         }
     );
 
     if (!resp.ok) {
-        store.displayToast(UnexpectedErrorToast);
+        toast.error(unexpectedErrorToast);
         console.error(resp);
         throw resp.text;
     }
@@ -80,11 +74,11 @@ export async function getImages(options: GetImagesOptions = {}) {
 
     const resp = await fetchWithTimeout(basePath + "/images" + params, {
         timeout: defaultTimeout,
-        onTimeout: () => store.displayToast(TimeoutToast),
+        onTimeout: () => toast.error(timeoutToast),
     });
 
     if (!resp.ok) {
-        store.displayToast(UnexpectedErrorToast);
+        toast.error(unexpectedErrorToast);
         console.error(resp);
         throw resp.text;
     }
@@ -114,12 +108,12 @@ export async function getUser(username: string) {
         basePath + "/users?username=" + username,
         {
             timeout: defaultTimeout,
-            onTimeout: () => store.displayToast(TimeoutToast),
+            onTimeout: () => toast.error(timeoutToast),
         }
     );
 
     if (!resp.ok) {
-        store.displayToast(UnexpectedErrorToast);
+        toast.error(unexpectedErrorToast);
         console.error(resp);
         throw resp.text;
     }
@@ -141,11 +135,11 @@ export async function getUser(username: string) {
 export async function getUsers() {
     const resp = await fetchWithTimeout(basePath + "/users", {
         timeout: defaultTimeout,
-        onTimeout: () => store.displayToast(TimeoutToast),
+        onTimeout: () => toast.error(timeoutToast),
     });
 
     if (!resp.ok) {
-        store.displayToast(UnexpectedErrorToast);
+        toast.error(unexpectedErrorToast);
         console.error(resp);
         throw resp.text;
     }

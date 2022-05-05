@@ -1,3 +1,7 @@
+import { toast } from "react-hot-toast";
+
+export type ToastArgs = Parameters<typeof toast>;
+
 export class TimeoutError extends Error {
     constructor(message: string) {
         super(message);
