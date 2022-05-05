@@ -1,9 +1,9 @@
 import logging
 
-from api.models import Image, TwitterUser as UserModel
+from api.models import Image, TwitterUser
 from django.db import IntegrityError
 from django.utils import timezone
-from lib.twitter import TwitterAPI, TwitterMediaType, TwitterUser as APIUser
+from lib.twitter import TwitterAPI, TwitterMediaType
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +41,9 @@ class Scraper:
 
         logger.info(f"Scrape start")
 
-        tweets = self.api.get_user_media_tweets_auto_paginate(u.id, limit=count)
+        tweets = self.api.get_user_media_tweets_auto_paginate(
+            user.twitter_id, limit=count
+        )
         logger.debug(f"Found {len(tweets)} tweets")
 
         if not tweets:
@@ -98,14 +100,14 @@ class Scraper:
             raise ValueError("Only the username or Twitter ID can be given, not both.")
 
         created = False
-        user: UserModel
+        user: TwitterUser
 
         if username:
             try:
-                user = UserModel.objects.get(username__iexact=username)
-            except UserModel.DoesNotExist:
+                user = TwitterUser.objects.get(username__iexact=username)
+            except TwitterUser.DoesNotExist:
                 data = self.api.get_user_by_username(username)
-                user = UserModel(
+                user = TwitterUser(
                     profile_image_url=data.profile_image_url,
                     twitter_id=data.id,
                     username=data.username,
@@ -114,6 +116,6 @@ class Scraper:
                 created = True
         else:
             # Making the assumption that the user exists if we know their Twitter ID
-            user = UserModel.objects.get(twitter_id=twitter_id)
+            user = TwitterUser.objects.get(twitter_id=twitter_id)
 
         return (user, created)

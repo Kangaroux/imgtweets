@@ -25,7 +25,7 @@ class TwitterMediaType(Enum):
 
 
 @dataclass
-class TwitterUser:
+class UserData:
     id: str
     name: str
     username: str
@@ -33,16 +33,16 @@ class TwitterUser:
 
 
 @dataclass
-class TwitterMedia:
+class MediaData:
     key: str
     type: TwitterMediaType
     url: str
 
 
 @dataclass
-class TwitterMediaTweet:
+class TweetData:
     created_at: datetime
-    media: List[TwitterMedia]
+    media: List[MediaData]
     tweet_id: str
     user_id: str
 
@@ -80,7 +80,7 @@ class TwitterAPI:
 
         data = resp.json()["data"]
 
-        return TwitterUser(
+        return UserData(
             id=data["id"],
             name=data["name"],
             username=data["username"],
@@ -122,15 +122,15 @@ class TwitterAPI:
         )
         self._handle_errors(resp)
 
-        media: Dict[str, TwitterMedia] = {}
-        tweets: List[TwitterMediaTweet] = []
+        media: Dict[str, MediaData] = {}
+        tweets: List[TweetData] = []
 
         for data in resp.json().get("includes", {}).get("media", []):
             key = data["media_key"]
 
             # URL seems to be missing for animated_gif media
             url = data.get("url")
-            media[key] = TwitterMedia(
+            media[key] = MediaData(
                 key=key,
                 type=TwitterMediaType(data["type"]),
                 url=url,
@@ -149,7 +149,7 @@ class TwitterAPI:
             created_at = created_at.astimezone(timezone.utc)
 
             tweets.append(
-                TwitterMediaTweet(
+                TweetData(
                     media=[media[key] for key in media_keys],
                     user_id=twitter_id,
                     tweet_id=data["id"],
@@ -169,7 +169,7 @@ class TwitterAPI:
         method lets you pass in any limit value. This will automatically stop trying to
         retrieve more results once all the results have been exhausted.
         """
-        results: List[TwitterMediaTweet] = []
+        results: List[TweetData] = []
         pagination_token: str = None
 
         while limit > 0:
