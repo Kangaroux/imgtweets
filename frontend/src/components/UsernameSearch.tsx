@@ -1,15 +1,12 @@
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
+
 import { store } from "../store";
 import * as API from "../api";
 import { UsernameSearchResults } from "./UsernameSearchResults";
 import "./UsernameSearch.scss";
 
-export interface Props {
-    onChange?(val: string): void;
-}
-
-export const UsernameSearch = observer((props: Props) => {
+export const UsernameSearch = observer(() => {
     const [val, setVal] = useState("");
 
     const onPickUser = (user: API.User) => {

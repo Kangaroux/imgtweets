@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
+
 import * as API from "../api";
 import { store } from "../store";
 import "./UsernameSearchResults.scss";

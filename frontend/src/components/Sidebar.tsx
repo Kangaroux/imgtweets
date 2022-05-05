@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
+
 import { UsernameSearch } from "./UsernameSearch";
 import "./Sidebar.scss";
 

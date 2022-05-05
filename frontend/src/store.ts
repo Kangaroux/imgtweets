@@ -1,4 +1,5 @@
 import { makeAutoObservable } from "mobx";
+
 import * as API from "./api";
 
 export interface UserImages {

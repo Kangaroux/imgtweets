@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useRef, useState } from "react";
+
 import * as API from "../api";
 import "./Image.scss";
 
@@ -13,7 +14,6 @@ export interface Props {
 
 export const Image = observer(({ image }: Props) => {
     const [loaded, setLoaded] = useState(false);
-    const [visible, setVisible] = useState(false);
     const ref = useRef(null);
 
     // Effect for lazy loading images. Images aren't loaded until the placeholder is
@@ -45,7 +45,6 @@ export const Image = observer(({ image }: Props) => {
                 img.onload = () => setLoaded(true);
                 img.src = image.url;
 
-                setVisible(true);
                 cleanUp();
             }
         }, options);
