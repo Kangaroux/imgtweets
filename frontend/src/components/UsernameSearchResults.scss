@@ -6,6 +6,8 @@
     cursor: pointer;
     color: #ddd;
     line-height: 0;
+    max-height: 400px;
+    overflow-y: scroll;
 
     li {
         padding: 15px;
