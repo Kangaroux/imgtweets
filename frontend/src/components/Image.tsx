@@ -4,9 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import * as API from "../api";
 import "./Image.scss";
 
-// This margin is the distance between an off-screen image and the viewport.
-// Images that come within this distance will be preloaded
-const intersectMargin = "250px 0px";
+// Images within this distance of the viewport will be preloaded
+const preloadDistance = "250px";
 
 export interface Props {
     image: API.Image;
@@ -25,7 +24,7 @@ export const Image = observer(({ image }: Props) => {
 
         const cleanUp = () => viewportObserver.disconnect();
         const options: IntersectionObserverInit = {
-            rootMargin: intersectMargin,
+            rootMargin: preloadDistance + " 0px",
         };
 
         const viewportObserver = new IntersectionObserver((entries) => {
