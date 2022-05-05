@@ -7,6 +7,13 @@ export interface UserImages {
     user: API.User;
 }
 
+export interface ToastArgs {
+    msg: string;
+    type: "ok" | "error";
+}
+
+export type ToastHandler = (args: ToastArgs) => void;
+
 class Store {
     // All of the user and image data retrieved from the API
     data: UserImages[] = [];
@@ -28,12 +35,34 @@ class Store {
         users: false,
     };
 
+    toastListeners: ToastHandler[] = [];
+
     constructor() {
         makeAutoObservable(this);
     }
 
     get usernameList() {
         return Array.from(this.usernames.keys());
+    }
+
+    displayToast(toast: ToastArgs) {
+        for (const handlers of this.toastListeners) {
+            handlers(toast);
+        }
+    }
+
+    addToastHandler(handler: ToastHandler) {
+        this.toastListeners.push(handler);
+    }
+
+    removeToastHandler(handler: ToastHandler) {
+        const i = this.toastListeners.indexOf(handler);
+
+        if (i === -1) {
+            return;
+        }
+
+        this.toastListeners.splice(i, 1);
     }
 
     addUser(user: API.User) {
@@ -97,7 +126,10 @@ class Store {
 
         try {
             const images = await API.getImages(options);
-            this.addImages(images);
+
+            if (images !== null) {
+                this.addImages(images);
+            }
         } finally {
             this.setFetchingImages(false);
         }
@@ -112,7 +144,10 @@ class Store {
 
         try {
             const user = await API.getUser(username);
-            this.addUser(user);
+
+            if (user !== null) {
+                this.addUser(user);
+            }
         } finally {
             this.setFetchingUsers(false);
         }
@@ -128,8 +163,10 @@ class Store {
         try {
             const users = await API.getUsers();
 
-            for (const u of users) {
-                this.addUser(u);
+            if (users !== null) {
+                for (const u of users) {
+                    this.addUser(u);
+                }
             }
         } finally {
             this.setFetchingUsers(false);

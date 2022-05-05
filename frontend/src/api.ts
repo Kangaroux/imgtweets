@@ -1,4 +1,17 @@
+import { store, ToastArgs } from "./store";
+import { fetchWithTimeout } from "./util";
+
 const basePath = "/api";
+const defaultTimeout = 8000;
+
+const UnexpectedErrorToast: ToastArgs = {
+    msg: "An unexpected error occurred.",
+    type: "error",
+};
+const TimeoutToast: ToastArgs = {
+    msg: "The request timed out, did you lose internet?",
+    type: "error",
+};
 
 interface ListResponse {
     count: number;
@@ -39,9 +52,18 @@ export interface GetImagesOptions {
 }
 
 export async function scrapeUserImages(username: string) {
-    const resp = await fetch(basePath + "/images/fetch?username=" + username);
+    const resp = await fetchWithTimeout(
+        basePath + "/images/fetch?username=" + username,
+        {
+            timeout: defaultTimeout,
+            onTimeout: () => store.displayToast(TimeoutToast),
+        }
+    );
 
-    if (!resp.ok) {
+    if (resp === null) {
+        return;
+    } else if (!resp.ok) {
+        store.displayToast(UnexpectedErrorToast);
         console.error(resp);
         throw resp.text;
     }
@@ -58,9 +80,15 @@ export async function getImages(options: GetImagesOptions = {}) {
         }
     }
 
-    const resp = await fetch(basePath + "/images" + params);
+    const resp = await fetchWithTimeout(basePath + "/images" + params, {
+        timeout: defaultTimeout,
+        onTimeout: () => store.displayToast(TimeoutToast),
+    });
 
-    if (!resp.ok) {
+    if (resp === null) {
+        return null;
+    } else if (!resp.ok) {
+        store.displayToast(UnexpectedErrorToast);
         console.error(resp);
         throw resp.text;
     }
@@ -86,9 +114,18 @@ export async function getImages(options: GetImagesOptions = {}) {
 }
 
 export async function getUser(username: string) {
-    const resp = await fetch(basePath + "/users?username=" + username);
+    const resp = await fetchWithTimeout(
+        basePath + "/users?username=" + username,
+        {
+            timeout: defaultTimeout,
+            onTimeout: () => store.displayToast(TimeoutToast),
+        }
+    );
 
-    if (!resp.ok) {
+    if (resp === null) {
+        return null;
+    } else if (!resp.ok) {
+        store.displayToast(UnexpectedErrorToast);
         console.error(resp);
         throw resp.text;
     }
@@ -108,9 +145,15 @@ export async function getUser(username: string) {
 }
 
 export async function getUsers() {
-    const resp = await fetch(basePath + "/users");
+    const resp = await fetchWithTimeout(basePath + "/users", {
+        timeout: defaultTimeout,
+        onTimeout: () => store.displayToast(TimeoutToast),
+    });
 
-    if (!resp.ok) {
+    if (resp === null) {
+        return null;
+    } else if (!resp.ok) {
+        store.displayToast(UnexpectedErrorToast);
         console.error(resp);
         throw resp.text;
     }
