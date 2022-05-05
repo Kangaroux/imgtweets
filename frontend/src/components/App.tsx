@@ -14,7 +14,7 @@ export const App = observer(() => {
             <Toaster
                 containerStyle={{
                     top: "auto",
-                    bottom: "100px"
+                    bottom: "100px",
                 }}
                 toastOptions={{
                     duration: 4000,
@@ -30,21 +30,24 @@ export const App = observer(() => {
 
                     success: {
                         style: {
-                            backgroundColor: "#008000"
-                        }
+                            backgroundColor: "#008000",
+                        },
                     },
                     error: {
                         style: {
-                            backgroundColor: "#911414"
-                        }
+                            backgroundColor: "#911414",
+                        },
                     },
-                }}>
+                }}
+            >
                 {(t) => (
                     <ToastBar
                         toast={t}
                         style={{
                             ...t.style,
-                            animation: t.visible ? 'toast-up 1s ease' : 'toast-down 1s ease',
+                            animation: t.visible
+                                ? "toast-up 1s ease"
+                                : "toast-down 1s ease",
                         }}
                     />
                 )}

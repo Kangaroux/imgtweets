@@ -167,7 +167,7 @@ class Store {
             });
         }
 
-        runInAction(() => this.currentImages = user.images!);
+        runInAction(() => (this.currentImages = user.images!));
     }
 
     setUsernameSearchResults(users: API.User[]) {
