@@ -13,3 +13,13 @@ body {
     background-color: #202020;
     color: #fff;
 }
+
+a,
+a:visited {
+    color: #ccc;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}

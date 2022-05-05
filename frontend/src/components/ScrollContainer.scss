@@ -1,9 +1,10 @@
 .scroll-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
     padding-top: 20px;
 
     // Take sidebar into account
     padding-left: 64px;
-
-    // Removes extra space between images
-    line-height: 0;
 }

@@ -60,7 +60,9 @@ export const Image = observer(({ image }: Props) => {
             {loaded ? (
                 <div className="image">
                     <img src={image.url} />
-                    {/* <div className="image-overlay"></div> */}
+                    <div className="image-overlay">
+                        <a href={`https://twitter.com/${image.user!.username}`} target="_blank">@{image.user!.username}</a> - <a href={image.tweetUrl} target="_blank">View tweet</a>
+                    </div>
                 </div>
             ) : (
                 <div className="image-placeholder" />

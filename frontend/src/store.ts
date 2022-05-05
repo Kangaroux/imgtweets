@@ -47,15 +47,16 @@ class Store {
 
     addImages(images: API.Image[]) {
         for (const img of images) {
-            const user = this.data.find(
+            const userData = this.data.find(
                 (data) => data.user.id === img.userId
             ) as UserImages;
 
-            if (user.images == null) {
-                user.images = [];
+            if (userData.images == null) {
+                userData.images = [];
             }
 
-            user.images = user.images.concat(img);
+            img.user = userData.user;
+            userData.images = userData.images.concat(img);
         }
     }
 

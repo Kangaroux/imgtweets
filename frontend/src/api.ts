@@ -18,6 +18,8 @@ export interface Image {
     tweetUrl: string;
     url: string;
     userId: number;
+
+    user?: User;
 }
 
 export interface User {

@@ -1,22 +1,8 @@
 .image-container {
-    max-width: 100%;
+    line-height: 0;
     margin-bottom: 20px;
 
-    img,
-    .image-placeholder {
-        display: block;
-        margin: 0 auto;
-    }
-
-    .image-placeholder {
-        background-color: #aaa;
-        width: 800px;
-        height: 1200px;
-        border-radius: 10px;
-    }
-
     .image {
-        display: inline-block;
         position: relative;
     }
 
@@ -26,7 +12,14 @@
         bottom: 0;
         width: 100%;
         padding: 20px;
-        background-color: rgba(#000, 0.7);
+        background-color: rgba(#000, 0.8);
         line-height: 1.5;
+    }
+
+    .image-placeholder {
+        background-color: #aaa;
+        width: 800px;
+        height: 1200px;
+        border-radius: 10px;
     }
 }
