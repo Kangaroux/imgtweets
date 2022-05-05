@@ -20,7 +20,7 @@ export const UsernameSearchResults = observer((props: Props) => {
         if (search && store.data.length) {
             const lowerVal = search.toLowerCase();
 
-            store.data.forEach(data => {
+            store.data.forEach((data) => {
                 if (data.user.username.toLowerCase().includes(lowerVal)) {
                     users.push(data.user);
                 }
@@ -35,21 +35,21 @@ export const UsernameSearchResults = observer((props: Props) => {
 
     return (
         <ul className="search-results">
-            {results && results.map(u => {
-                return (
-                    <li onClick={() => onSelect(u)}>
-                        <img src={u.profileImageUrl} /> <span>{u.username}</span>
-                    </li>
-                );
-            })}
-            {
-                search && (
-                    <li onClick={() => onNewUser(search)}>
-                        <img src="https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png" /> <span>{search}</span>
-                    </li>
-                )
-            }
-
+            {results &&
+                results.map((u) => {
+                    return (
+                        <li onClick={() => onSelect(u)}>
+                            <img src={u.profileImageUrl} />{" "}
+                            <span>{u.username}</span>
+                        </li>
+                    );
+                })}
+            {search && (
+                <li onClick={() => onNewUser(search)}>
+                    <img src="https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png" />{" "}
+                    <span>{search}</span>
+                </li>
+            )}
         </ul>
     );
 });

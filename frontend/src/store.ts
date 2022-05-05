@@ -46,7 +46,9 @@ class Store {
 
     addImages(images: API.Image[]) {
         for (const img of images) {
-            const user = this.data.find(data => data.user.id === img.userId) as UserImages;
+            const user = this.data.find(
+                (data) => data.user.id === img.userId
+            ) as UserImages;
 
             if (user.images == null) {
                 user.images = [];
@@ -134,14 +136,20 @@ class Store {
 
     async setCurrentImagesToUser(username: string) {
         if (!this.usernames.has(username)) {
-            console.warn(`Tried to add images for ${username} but their info hasn't been fetched yet`);
+            console.warn(
+                `Tried to add images for ${username} but their info hasn't been fetched yet`
+            );
             return;
         }
 
-        const user = this.data.find(u => u.user.username === username) as UserImages;
+        const user = this.data.find(
+            (u) => u.user.username === username
+        ) as UserImages;
 
         if (user.images == null) {
-            console.debug("setCurrentImagesToUser: User images are missing, fetching...")
+            console.debug(
+                "setCurrentImagesToUser: User images are missing, fetching..."
+            );
 
             await this.getImages({
                 exactMatch: true,

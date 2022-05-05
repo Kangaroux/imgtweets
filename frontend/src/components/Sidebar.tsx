@@ -22,7 +22,10 @@ export const Sidebar = observer(() => {
         <div className={className}>
             <div className="sidebar-container">
                 <div className="sidebar-header">
-                    <button className="sidebar-menu-btn" onClick={() => setOpen(!open)}>
+                    <button
+                        className="sidebar-menu-btn"
+                        onClick={() => setOpen(!open)}
+                    >
                         {open ? "close" : "menu"}
                     </button>
                 </div>

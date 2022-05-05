@@ -24,9 +24,11 @@ export const Image = observer(({ image }: Props) => {
         }
 
         const cleanUp = () => viewportObserver.disconnect();
-        const options: IntersectionObserverInit = { rootMargin: intersectMargin };
+        const options: IntersectionObserverInit = {
+            rootMargin: intersectMargin,
+        };
 
-        const viewportObserver = new IntersectionObserver(entries => {
+        const viewportObserver = new IntersectionObserver((entries) => {
             if (!entries.length) {
                 return;
             }
@@ -55,7 +57,11 @@ export const Image = observer(({ image }: Props) => {
 
     return (
         <div className="image" ref={ref}>
-            {loaded ? <img src={image.url} /> : <div className="image-placeholder" />}
+            {loaded ? (
+                <img src={image.url} />
+            ) : (
+                <div className="image-placeholder" />
+            )}
         </div>
     );
 });

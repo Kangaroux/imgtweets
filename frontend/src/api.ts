@@ -64,7 +64,7 @@ export async function getImages(options: GetImagesOptions = {}) {
     }
 
     const images: Image[] = [];
-    const data = await resp.json() as ListResponse;
+    const data = (await resp.json()) as ListResponse;
 
     for (const p of data.results) {
         images.push({
@@ -114,7 +114,7 @@ export async function getUsers() {
     }
 
     const users: User[] = [];
-    const data = await resp.json() as ListResponse;
+    const data = (await resp.json()) as ListResponse;
 
     for (const u of data.results) {
         users.push({

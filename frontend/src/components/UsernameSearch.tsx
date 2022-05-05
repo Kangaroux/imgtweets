@@ -19,7 +19,7 @@ export const UsernameSearch = observer((props: Props) => {
             store.setCurrentImagesToUser(user.username);
             setVal("");
         }
-    }
+    };
 
     const onPickNewUser = (username: string) => {
         const fn = async (username: string) => {
@@ -29,12 +29,12 @@ export const UsernameSearch = observer((props: Props) => {
 
         fn(username);
         setVal("");
-    }
+    };
 
     const onChange = (e: React.FormEvent<HTMLInputElement>) => {
         const cleaned = e.currentTarget.value.replace(/[^A-Za-z0-9_]/, "");
         setVal(cleaned);
-    }
+    };
 
     // Select the first user in the result if the user pressed enter
     const onSubmit = (e: React.FormEvent) => {
@@ -45,7 +45,7 @@ export const UsernameSearch = observer((props: Props) => {
         if (results.length) {
             onPickUser(results[0]);
         }
-    }
+    };
 
     return (
         <div className="username-search">
