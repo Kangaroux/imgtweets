@@ -2,7 +2,7 @@ import { store, ToastArgs } from "./store";
 import { fetchWithTimeout } from "./util";
 
 const basePath = "/api";
-const defaultTimeout = 8000;
+const defaultTimeout = 5000;
 
 const UnexpectedErrorToast: ToastArgs = {
     msg: "An unexpected error occurred.",
@@ -60,9 +60,7 @@ export async function scrapeUserImages(username: string) {
         }
     );
 
-    if (resp === null) {
-        return;
-    } else if (!resp.ok) {
+    if (!resp.ok) {
         store.displayToast(UnexpectedErrorToast);
         console.error(resp);
         throw resp.text;
@@ -85,9 +83,7 @@ export async function getImages(options: GetImagesOptions = {}) {
         onTimeout: () => store.displayToast(TimeoutToast),
     });
 
-    if (resp === null) {
-        return null;
-    } else if (!resp.ok) {
+    if (!resp.ok) {
         store.displayToast(UnexpectedErrorToast);
         console.error(resp);
         throw resp.text;
@@ -122,9 +118,7 @@ export async function getUser(username: string) {
         }
     );
 
-    if (resp === null) {
-        return null;
-    } else if (!resp.ok) {
+    if (!resp.ok) {
         store.displayToast(UnexpectedErrorToast);
         console.error(resp);
         throw resp.text;
@@ -150,9 +144,7 @@ export async function getUsers() {
         onTimeout: () => store.displayToast(TimeoutToast),
     });
 
-    if (resp === null) {
-        return null;
-    } else if (!resp.ok) {
+    if (!resp.ok) {
         store.displayToast(UnexpectedErrorToast);
         console.error(resp);
         throw resp.text;
