@@ -1,4 +1,7 @@
-.image {
+.image-container {
+    max-width: 100%;
+    margin-bottom: 20px;
+
     img,
     .image-placeholder {
         display: block;
@@ -10,5 +13,20 @@
         width: 800px;
         height: 1200px;
         border-radius: 10px;
+    }
+
+    .image {
+        display: inline-block;
+        position: relative;
+    }
+
+    .image-overlay {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        padding: 20px;
+        background-color: rgba(#000, 0.7);
+        line-height: 1.5;
     }
 }

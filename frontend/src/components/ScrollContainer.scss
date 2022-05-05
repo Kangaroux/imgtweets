@@ -4,8 +4,6 @@
     // Take sidebar into account
     padding-left: 64px;
 
-    * {
-        max-width: 100%;
-        margin-bottom: 20px;
-    }
+    // Removes extra space between images
+    line-height: 0;
 }

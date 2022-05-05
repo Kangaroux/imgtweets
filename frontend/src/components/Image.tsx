@@ -56,9 +56,12 @@ export const Image = observer(({ image }: Props) => {
     }, [observer]);
 
     return (
-        <div className="image" ref={ref}>
+        <div className="image-container" ref={ref}>
             {loaded ? (
-                <img src={image.url} />
+                <div className="image">
+                    <img src={image.url} />
+                    {/* <div className="image-overlay"></div> */}
+                </div>
             ) : (
                 <div className="image-placeholder" />
             )}
