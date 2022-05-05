@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import * as API from "../api";
 import "./Image.scss";
@@ -13,16 +13,11 @@ export interface Props {
 
 export const Image = observer(({ image }: Props) => {
     const [loaded, setLoaded] = useState(false);
-    const ref = useRef(null);
+    const [observer, setObserver] = useState<IntersectionObserver>();
 
-    // Effect for lazy loading images. Images aren't loaded until the placeholder is
-    // almost scrolled into view
+    // Create the lazy loading observer on mount. Images are preloaded as
+    // the placeholder element nears the edge of the screen.
     useEffect(() => {
-        if (ref.current === null) {
-            return;
-        }
-
-        const cleanUp = () => viewportObserver.disconnect();
         const options: IntersectionObserverInit = {
             rootMargin: preloadDistance + " 0px",
         };
@@ -34,7 +29,6 @@ export const Image = observer(({ image }: Props) => {
 
             const e = entries[0];
 
-            // The image placeholder is close to being displayed, preload the image
             if (e.isIntersecting) {
                 // Preload the image off screen so we can swap the element immediately.
                 // This looks nicer and also prevents an issue where the sudden change
@@ -43,15 +37,23 @@ export const Image = observer(({ image }: Props) => {
                 const img = new window.Image();
                 img.onload = () => setLoaded(true);
                 img.src = image.url;
-
-                cleanUp();
             }
         }, options);
 
-        viewportObserver.observe(ref.current);
+        setObserver(viewportObserver);
 
-        return cleanUp;
-    }, [ref.current]);
+        return () => observer?.disconnect();
+    }, []);
+
+    // Observe the footer element which tells us when we are close to
+    // the bottom of the page
+    const ref = useCallback((el: HTMLElement | null) => {
+        if (!observer || !el) {
+            return;
+        }
+
+        observer.observe(el);
+    }, [observer]);
 
     return (
         <div className="image" ref={ref}>

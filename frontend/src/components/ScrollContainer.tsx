@@ -43,22 +43,17 @@ export const ScrollContainer = observer(({ images }: Props) => {
 
         setObserver(viewportObserver);
 
-        // A bit redundant since the ref callback disconnects as well
         return () => observer?.disconnect();
     }, []);
 
     // Observe the footer element which tells us when we are close to
     // the bottom of the page
-    const ref = useCallback((el: HTMLElement) => {
-        if (!observer) {
+    const ref = useCallback((el: HTMLElement | null) => {
+        if (!observer || !el) {
             return;
         }
 
-        if (el) {
-            observer.observe(el);
-        } else {
-            observer.unobserve(el);
-        }
+        observer.observe(el);
     }, [observer]);
 
     return (
