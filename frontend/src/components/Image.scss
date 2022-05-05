@@ -2,6 +2,10 @@
     line-height: 0;
     margin-bottom: 20px;
 
+    &:hover .image-overlay {
+        opacity: 1;
+    }
+
     .image {
         position: relative;
     }
@@ -14,6 +18,9 @@
         padding: 20px;
         background-color: rgba(#000, 0.8);
         line-height: 1.5;
+        opacity: 0;
+
+        transition: opacity 0.3s;
     }
 
     .image-placeholder {
