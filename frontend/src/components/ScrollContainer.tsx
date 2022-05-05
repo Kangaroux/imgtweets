@@ -37,7 +37,7 @@ export const ScrollContainer = observer(({ images }: Props) => {
             const e = entries[0];
 
             if (e.isIntersecting) {
-                setPage(p => p + 1);
+                setPage((p) => p + 1);
             }
         }, options);
 
@@ -48,13 +48,16 @@ export const ScrollContainer = observer(({ images }: Props) => {
 
     // Observe the footer element which tells us when we are close to
     // the bottom of the page
-    const ref = useCallback((el: HTMLElement | null) => {
-        if (!observer || !el) {
-            return;
-        }
+    const ref = useCallback(
+        (el: HTMLElement | null) => {
+            if (!observer || !el) {
+                return;
+            }
 
-        observer.observe(el);
-    }, [observer]);
+            observer.observe(el);
+        },
+        [observer]
+    );
 
     return (
         <div className="scroll-container">

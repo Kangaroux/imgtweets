@@ -47,13 +47,16 @@ export const Image = observer(({ image }: Props) => {
 
     // Observe the footer element which tells us when we are close to
     // the bottom of the page
-    const ref = useCallback((el: HTMLElement | null) => {
-        if (!observer || !el) {
-            return;
-        }
+    const ref = useCallback(
+        (el: HTMLElement | null) => {
+            if (!observer || !el) {
+                return;
+            }
 
-        observer.observe(el);
-    }, [observer]);
+            observer.observe(el);
+        },
+        [observer]
+    );
 
     return (
         <div className="image-container" ref={ref}>
@@ -61,7 +64,16 @@ export const Image = observer(({ image }: Props) => {
                 <div className="image">
                     <img src={image.url} />
                     <div className="image-overlay">
-                        <a href={`https://twitter.com/${image.user!.username}`} target="_blank">@{image.user!.username}</a> - <a href={image.tweetUrl} target="_blank">View tweet</a>
+                        <a
+                            href={`https://twitter.com/${image.user!.username}`}
+                            target="_blank"
+                        >
+                            @{image.user!.username}
+                        </a>
+                        {" - "}
+                        <a href={image.tweetUrl} target="_blank">
+                            View tweet
+                        </a>
                     </div>
                 </div>
             ) : (
