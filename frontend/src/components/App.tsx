@@ -11,8 +11,7 @@ export const App = observer(() => {
     return (
         <div>
             <Sidebar />
-            {!store.currentImages.length && <Help />}
-            <ScrollContainer images={store.currentImages} />
+            {store.currentImages.length ? <ScrollContainer images={store.currentImages} /> : <Help />}
             <Toaster
                 containerStyle={{
                     top: "auto",
