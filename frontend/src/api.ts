@@ -4,6 +4,7 @@ import { fetchWithTimeout } from "./util";
 const basePath = "/api";
 const defaultTimeout = 6000;
 
+const userDoesntExistToast = "No user with that username exists.";
 const unexpectedErrorToast = "An unexpected error occurred.";
 const timeoutToast = "The request timed out, did you lose internet?";
 
@@ -55,9 +56,14 @@ export async function scrapeUserImages(username: string) {
     );
 
     if (!resp.ok) {
-        toast.error(unexpectedErrorToast);
+        if (resp.status === 404) {
+            toast.error(userDoesntExistToast);
+        } else {
+            toast.error(unexpectedErrorToast);
+        }
+
         console.error(resp);
-        throw resp.text;
+        throw resp;
     }
 }
 
@@ -80,7 +86,7 @@ export async function getImages(options: GetImagesOptions = {}) {
     if (!resp.ok) {
         toast.error(unexpectedErrorToast);
         console.error(resp);
-        throw resp.text;
+        throw resp;
     }
 
     const images: Image[] = [];
@@ -113,9 +119,14 @@ export async function getUser(username: string) {
     );
 
     if (!resp.ok) {
-        toast.error(unexpectedErrorToast);
+        if (resp.status === 404) {
+            toast.error(userDoesntExistToast);
+        } else {
+            toast.error(unexpectedErrorToast);
+        }
+
         console.error(resp);
-        throw resp.text;
+        throw resp;
     }
 
     const data = await resp.json();
@@ -141,7 +152,7 @@ export async function getUsers() {
     if (!resp.ok) {
         toast.error(unexpectedErrorToast);
         console.error(resp);
-        throw resp.text;
+        throw resp;
     }
 
     const users: User[] = [];
