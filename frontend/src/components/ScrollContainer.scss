@@ -2,9 +2,8 @@
     display: flex;
     align-items: center;
     flex-direction: column;
-
     padding-top: 20px;
 
-    // Take sidebar into account
-    padding-left: 64px;
+    height: 100vh;
+    overflow-y: scroll;
 }
