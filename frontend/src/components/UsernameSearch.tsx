@@ -11,13 +11,7 @@ export const UsernameSearch = observer(() => {
     const [val, setVal] = useState("");
 
     const onPickUser = (user: API.User) => {
-        if (store.usernameSearchResults.length === 0) {
-            onPickNewUser(val);
-        } else {
-            store.setCurrentImagesToUser(user.username);
-            setVal("");
-        }
-
+        store.setCurrentImagesToUser(user.username);
         store.setSidebarOpen(false);
     };
 
@@ -28,7 +22,6 @@ export const UsernameSearch = observer(() => {
         };
 
         fn(username);
-        setVal("");
         store.setSidebarOpen(false);
     };
 
