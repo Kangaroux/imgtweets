@@ -87,7 +87,7 @@ export async function getImages(options: GetImagesOptions = {}) {
         onTimeout: () => toast.error(timeoutToast),
     });
 
-    plausible("apiGetImages", { props: { options, time: Date.now() - earlier } });
+    plausible("apiGetImages", { props: { ...options, time: Date.now() - earlier } });
 
     if (!resp.ok) {
         toast.error(unexpectedErrorToast);
