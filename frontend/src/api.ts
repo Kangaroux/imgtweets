@@ -42,6 +42,7 @@ export interface User {
     profileImageUrl: string;
     twitterId: string;
     username: string;
+    imageCount: number;
 }
 
 export interface GetImagesOptions {
@@ -155,7 +156,7 @@ export async function getUser(username: string) {
     }
 
     const data = await resp.json();
-    const user = {
+    const user: User = {
         id: data.id,
         createdAt: data.created_at,
         updatedAt: data.updated_at,
@@ -163,6 +164,7 @@ export async function getUser(username: string) {
         profileImageUrl: data.profile_image_url,
         twitterId: data.twitter_id,
         username: data.username,
+        imageCount: data.image_count,
     };
 
     return user;
@@ -200,6 +202,7 @@ export async function getUsers() {
             profileImageUrl: u.profile_image_url,
             twitterId: u.twitter_id,
             username: u.username,
+            imageCount: u.image_count,
         });
     }
 

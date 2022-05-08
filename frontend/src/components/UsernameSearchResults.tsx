@@ -17,6 +17,11 @@ export interface Props {
 export const UsernameSearchResults = observer((props: Props) => {
     const { onNewUser, onSelect, search, showResults } = props;
 
+    const userImageCount = (u: API.User) => {
+        const data = store.data.find((d) => d.user.id === u.id);
+        return data?.user.imageCount || 0;
+    }
+
     // The results to show if there's no search query. This returns a list
     // of the most recently added users.
     const defaultResults = useMemo(() => {
@@ -59,7 +64,7 @@ export const UsernameSearchResults = observer((props: Props) => {
                 return (
                     <li onClick={() => onSelect(u)} key={u.id}>
                         <img src={u.profileImageUrl} alt="" />{" "}
-                        <span>{u.username}</span>
+                        <span>{u.username} ({userImageCount(u)})</span>
                     </li>
                 );
             })}
