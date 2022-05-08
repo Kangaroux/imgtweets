@@ -27,7 +27,7 @@ case "$1" in
     rm -rf dist/ && mkdir -p dist/static/
 
     cp -R server/static/* dist/static/
-    cp frontend/build/index.html dist/
+    cp frontend/build/{index.html,robots.txt} dist/
     cp -R frontend/build/static/* dist/static/
     ;;
 esac
