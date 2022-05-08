@@ -1,11 +1,11 @@
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
 
+import { store } from "../store";
 import { UsernameSearch } from "./UsernameSearch";
 import "./Sidebar.scss";
 
 export const Sidebar = observer(() => {
-    const [open, setOpen] = useState(true);
+    const open = store.sidebarOpen;
 
     let className = "sidebar";
     let content;
@@ -30,7 +30,7 @@ export const Sidebar = observer(() => {
                 <div className="sidebar-header">
                     <button
                         className="sidebar-menu-btn"
-                        onClick={() => setOpen(!open)}
+                        onClick={() => store.setSidebarOpen(!open)}
                     >
                         {open ? "close" : "menu"}
                     </button>

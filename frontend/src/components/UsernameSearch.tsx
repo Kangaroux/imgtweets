@@ -16,6 +16,8 @@ export const UsernameSearch = observer(() => {
             store.setCurrentImagesToUser(user.username);
             setVal("");
         }
+
+        store.setSidebarOpen(false);
     };
 
     const onPickNewUser = (username: string) => {

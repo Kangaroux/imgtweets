@@ -21,6 +21,8 @@ class Store {
     // A list of users matching the username search query
     usernameSearchResults: API.User[] = [];
 
+    sidebarOpen = true;
+
     // Which APIs are currently in use
     fetching = {
         scraping: false,
@@ -172,6 +174,10 @@ class Store {
 
     setUsernameSearchResults(users: API.User[]) {
         this.usernameSearchResults = users;
+    }
+
+    setSidebarOpen(open: boolean) {
+        this.sidebarOpen = open;
     }
 }
 
