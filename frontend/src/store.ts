@@ -147,18 +147,17 @@ class Store {
     }
 
     async setCurrentImagesToUser(username: string) {
-        if (!this.usernames.has(username)) {
+        // Find the user using a case insensitive match
+        const user = this.data.find(
+            (u) => u.user.username.toLowerCase() === username.toLowerCase()
+        ) as UserImages;
+
+        if (!user) {
             console.warn(
                 `Tried to add images for ${username} but their info hasn't been fetched yet`
             );
             return;
-        }
-
-        const user = this.data.find(
-            (u) => u.user.username === username
-        ) as UserImages;
-
-        if (user.images == null) {
+        } else if (user.images == null) {
             console.debug(
                 "setCurrentImagesToUser: User images are missing, fetching..."
             );
