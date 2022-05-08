@@ -24,13 +24,14 @@ export const ScrollContainer = observer(({ images }: Props) => {
         return images.slice(0, page * IMAGES_PER_PAGE);
     }, [images, page]);
 
-    // Scroll the container back to the top if the images changed
+    // Reset the container if the images change
     useEffect(() => {
         if (!containerRef) {
             return;
         }
 
         containerRef.scrollTop = 0;
+        setPage(1);
     }, [images, containerRef]);
 
     // Create an observer with the container as the root element. Using the
