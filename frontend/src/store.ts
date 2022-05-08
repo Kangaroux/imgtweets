@@ -22,7 +22,8 @@ class Store {
     // A list of users matching the username search query
     usernameSearchResults: API.User[] = [];
 
-    sidebarOpen = true;
+    // Start with the sidebar open for larger screens only
+    sidebarOpen = document.body.clientWidth > 640;
 
     // Which APIs are currently in use
     fetching = {
