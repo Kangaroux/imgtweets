@@ -80,8 +80,7 @@ class RetrieveMultipleMixin(RetrieveModelMixin):
 class ImageAPI(ReadOnlyModelViewSet):
     # The amount of time before another fetch request can be made for the same user
     FETCH_COOLDOWN = timedelta(minutes=30)
-    RESCRAPE_COUNT = 100
-    FIRST_SCRAPE_COUNT = 500
+    SCRAPE_COUNT = 500
 
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
@@ -120,17 +119,12 @@ class ImageAPI(ReadOnlyModelViewSet):
                     {"message": msg}, status=429, headers={"Retry-After": sec}
                 )
 
-        count = self.RESCRAPE_COUNT
-
-        # Increase the count if the user has never been scraped before
-        if user and not user.last_scraped_at:
-            count = self.FIRST_SCRAPE_COUNT
-
         scraper = Scraper(settings.TWITTER_API_TOKEN)
 
         try:
             tweet_count, image_count, added_count = scraper.scrape_timeline(
-                count=count, username=username
+                count=self.SCRAPE_COUNT,
+                username=username,
             )
         except TwitterErrorNotFound:
             raise NotFound("Unable to find a user with that username.")

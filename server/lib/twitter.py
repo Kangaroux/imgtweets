@@ -55,6 +55,8 @@ class TwitterAPI:
     MAX_RESULTS_LIMIT = 100
     MIN_RESULTS_LIMIT = 5
 
+    DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
+
     def __init__(self, bearer_token: str):
         self.bearer_token = bearer_token
         self.session = requests.Session()
@@ -87,7 +89,11 @@ class TwitterAPI:
         )
 
     def get_user_media_tweets(
-        self, twitter_id: str, limit: int, pagination_token: str = None
+        self,
+        twitter_id: str,
+        limit: int,
+        since: datetime = None,
+        pagination_token: str = None,
     ):
         """
         Uses the Twitter API to retrieve a list of most recent tweets from the user.
@@ -116,6 +122,9 @@ class TwitterAPI:
         if pagination_token:
             params["pagination_token"] = pagination_token
 
+        if since:
+            params["start_time"] = since.strftime(self.DATETIME_FORMAT + "Z")
+
         resp = self.session.get(
             self.BASE_PATH + f"/users/{twitter_id}/tweets", params=params
         )
@@ -135,7 +144,7 @@ class TwitterAPI:
                 url=url,
             )
 
-        for data in resp.json()["data"]:
+        for data in resp.json().get("data", []):
             media_keys = data.get("attachments", {}).get("media_keys", [])
 
             if not media_keys:
@@ -144,7 +153,7 @@ class TwitterAPI:
             # API returns a date time string like "2022-04-26T22:32:33.000Z"
             # This strips the ".000Z" suffix
             created_at_str = data["created_at"].split(".")[0]
-            created_at = datetime.strptime(created_at_str, "%Y-%m-%dT%H:%M:%S")
+            created_at = datetime.strptime(created_at_str, self.DATETIME_FORMAT)
             created_at = created_at.astimezone(timezone.utc)
 
             tweets.append(
@@ -156,11 +165,13 @@ class TwitterAPI:
                 )
             )
 
-        pagination_token = resp.json()["meta"].get("next_token")
+        pagination_token = resp.json().get("meta", {}).get("next_token")
 
         return (tweets, pagination_token)
 
-    def get_user_media_tweets_auto_paginate(self, twitter_id: str, limit: int):
+    def get_user_media_tweets_auto_paginate(
+        self, twitter_id: str, limit: int, since: datetime = None
+    ):
         """
         Helper for calling `get_user_media_tweets` that handles the pagination for you.
 
@@ -176,6 +187,7 @@ class TwitterAPI:
                 twitter_id=twitter_id,
                 limit=min(limit, self.MAX_RESULTS_LIMIT),
                 pagination_token=pagination_token,
+                since=since,
             )
 
             results.extend(tweets)

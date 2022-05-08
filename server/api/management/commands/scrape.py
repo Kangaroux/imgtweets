@@ -34,4 +34,4 @@ class Command(BaseCommand):
             )
 
         scraper = Scraper(token)
-        scraper.scrape_timeline(username, count)
+        scraper.scrape_timeline(count=count, username=username)

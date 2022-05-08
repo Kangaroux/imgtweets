@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from django.db import IntegrityError
 from django.utils import timezone
@@ -15,7 +16,12 @@ class Scraper:
     def __init__(self, token: str):
         self.api = TwitterAPI(token)
 
-    def scrape_timeline(self, count: int, username: str = None, twitter_id: str = None):
+    def scrape_timeline(
+        self,
+        count: int,
+        username: str = None,
+        twitter_id: str = None,
+    ):
         """
         Scrapes a user's timeline for images and adds them to the database.
 
@@ -36,14 +42,21 @@ class Scraper:
         else:
             logger.debug("Found existing user in database")
 
+        since = user.last_scraped_at
+
         # Set this early to try and mitigate simultaneous fetch requests
         user.last_scraped_at = timezone.now()
         user.save()
 
         logger.info(f"Scrape start")
 
+        if since:
+            logger.debug(f"Only fetching tweets newer than {since}")
+
         tweets = self.api.get_user_media_tweets_auto_paginate(
-            user.twitter_id, limit=count
+            user.twitter_id,
+            limit=count,
+            since=since,
         )
         logger.debug(f"Found {len(tweets)} tweets")
 
