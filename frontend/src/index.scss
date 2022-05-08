@@ -17,9 +17,9 @@ body {
 a,
 a:visited {
     color: #ccc;
-    text-decoration: none;
+    font-weight: bold;
 
     &:hover {
-        text-decoration: underline;
+        color: #fff;
     }
 }

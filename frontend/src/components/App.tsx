@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite";
 import { ToastBar, Toaster } from "react-hot-toast";
 
 import { store } from "../store";
+import { Help } from "./Help";
 import { ScrollContainer } from "./ScrollContainer";
 import { Sidebar } from "./Sidebar";
 import "./Toast.scss";
@@ -10,6 +11,7 @@ export const App = observer(() => {
     return (
         <div>
             <Sidebar />
+            {!store.currentImages.length && <Help />}
             <ScrollContainer images={store.currentImages} />
             <Toaster
                 containerStyle={{

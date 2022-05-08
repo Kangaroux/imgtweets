@@ -18,7 +18,12 @@ export const Sidebar = observer(() => {
                     <UsernameSearch />
                 </div>
                 <div className="sidebar-footer">
-                    <a href="https://github.com/Kangaroux/twitter-image-viewer" target="_blank">Github</a>
+                    <a
+                        href="https://github.com/Kangaroux/twitter-image-viewer"
+                        target="_blank"
+                    >
+                        Github
+                    </a>
                 </div>
             </>
         );
