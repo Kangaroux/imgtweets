@@ -50,3 +50,18 @@
         }
     }
 }
+
+@media (max-width: 640px) {
+    .sidebar {
+        width: 48px;
+    }
+
+    .sidebar-menu-btn {
+        font-size: 32px;
+        margin: 4px;
+    }
+
+    .sidebar-open {
+        width: 100%;
+    }
+}
