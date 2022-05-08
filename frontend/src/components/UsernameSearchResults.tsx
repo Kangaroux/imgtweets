@@ -40,14 +40,14 @@ export const UsernameSearchResults = observer((props: Props) => {
                 results.map((u) => {
                     return (
                         <li onClick={() => onSelect(u)} key={u.id}>
-                            <img src={u.profileImageUrl} />{" "}
+                            <img src={u.profileImageUrl} alt="" />{" "}
                             <span>{u.username}</span>
                         </li>
                     );
                 })}
             {!!search && (
                 <li onClick={() => onNewUser(search)}>
-                    <img src="https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png" />{" "}
+                    <img src="https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png" alt="" />{" "}
                     <span>{search}</span>
                 </li>
             )}

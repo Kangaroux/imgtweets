@@ -62,7 +62,7 @@ export const Image = observer(({ image }: Props) => {
         <div className="image-container" ref={ref}>
             {loaded ? (
                 <div className="image">
-                    <img src={image.url} />
+                    <img src={image.url} alt="" />
                     <div className="image-overlay">
                         <a
                             href={`https://twitter.com/${image.user!.username}`}
