@@ -130,7 +130,7 @@ class ImageAPI(ReadOnlyModelViewSet):
 
         try:
             tweet_count, image_count, added_count = scraper.scrape_timeline(
-                username, count
+                count=count, username=username
             )
         except TwitterErrorNotFound:
             raise NotFound("Unable to find a user with that username.")
