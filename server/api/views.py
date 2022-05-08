@@ -21,34 +21,6 @@ from lib.twitter import TwitterErrorNotFound, TwitterRateLimit
 logger = logging.getLogger(__name__)
 
 
-class ImageUsernameFilter(BaseFilterBackend):
-    """
-    This filter allows the client to filter which images to return based on
-    the user's username.
-
-    The client can specify at most query param:
-
-        - `username`: Case insensitive exact match
-        - `username_like`: Case insensitive contains/includes
-    """
-
-    def filter_queryset(self, request, queryset, view):
-        username = request.query_params.get("username", "").strip()
-        username_like = request.query_params.get("username_like", "").strip()
-
-        if username and username_like:
-            raise ValidationError(
-                "username and username_like query params are mutually exclusive"
-            )
-
-        if username:
-            queryset = queryset.filter(user__username__iexact=username)
-        elif username_like:
-            queryset = queryset.filter(user__username__icontains=username)
-
-        return queryset
-
-
 class RetrieveMultipleMixin(RetrieveModelMixin):
     """
     Mixin that allows retrieving multiple instances at once by specifying
@@ -79,17 +51,45 @@ class RetrieveMultipleMixin(RetrieveModelMixin):
 
 
 class ImageAPI(ReadOnlyModelViewSet):
-    # The amount of time before another fetch request can be made for the same user
-    FETCH_COOLDOWN = timedelta(minutes=30)
+    RESCRAPE_TIME = timedelta(hours=4)
     SCRAPE_COUNT = 500
-
     throttle_classes = [StandardThrottle]
 
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
-    filter_backends = [ImageUsernameFilter, OrderingFilter]
+    filter_backends = [OrderingFilter]
     ordering_fields = "__all__"
     ordering = ["-tweeted_at"]
+
+    def list(self, request, *args, **kwargs):
+        username = request.query_params.get("username", "").strip()
+
+        if username:
+            try:
+                user: TwitterUser = TwitterUser.objects.get(username__iexact=username)
+            except TwitterUser.DoesNotExist:
+                pass
+
+            # Check if the user's timeline should be rescraped
+            if user and user.last_scraped_at:
+                diff: timedelta = timezone.now() - user.last_scraped_at
+
+                if diff > self.RESCRAPE_TIME:
+                    try:
+                        logger.info(
+                            f"User {user.username} was last scraped at {user.last_scraped_at} "
+                            f"({str(diff)} ago), rescraping"
+                        )
+                        scraper = Scraper(settings.TWITTER_API_TOKEN)
+                        scraper.scrape_timeline(
+                            count=self.SCRAPE_COUNT, username=user.username
+                        )
+                    except:
+                        logger.exception(
+                            "Caught exception trying to rescrape user %s", user.username
+                        )
+
+        return super().list(request, *args, **kwargs)
 
     @action(detail=False, throttle_classes=[FetchThrottle])
     def fetch(self, request, pk=None):
@@ -107,20 +107,12 @@ class ImageAPI(ReadOnlyModelViewSet):
         except TwitterUser.DoesNotExist:
             pass
 
+        # The fetch API is only meant for an initial scrape. Rescraping is handled
+        # by the GET /images API.
         if user and user.last_scraped_at:
-            diff: timedelta = timezone.now() - user.last_scraped_at
-            remaining = self.FETCH_COOLDOWN - diff
-            sec = math.ceil(remaining.total_seconds())
-
-            if sec > 0:
-                msg = (
-                    f"The last fetch was too recent. Please wait {sec} seconds "
-                    "before trying again."
-                )
-
-                return Response(
-                    {"message": msg}, status=429, headers={"Retry-After": sec}
-                )
+            return Response(
+                {"message": "User's timeline has already been scraped."}, status=400
+            )
 
         scraper = Scraper(settings.TWITTER_API_TOKEN)
 
