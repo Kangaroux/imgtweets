@@ -28,6 +28,7 @@ export const UsernameSearch = observer(() => {
 
         fn(username);
         setVal("");
+        store.setSidebarOpen(false);
     };
 
     const onChange = (e: React.FormEvent<HTMLInputElement>) => {

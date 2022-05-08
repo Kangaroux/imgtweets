@@ -1,4 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
+import toast from "react-hot-toast";
 
 import * as API from "./api";
 
@@ -81,11 +82,14 @@ class Store {
 
         this.setScraping(true);
 
+        const toastId = toast.loading("Fetching timeline, this might take a moment.");
+
         try {
             await API.scrapeUserImages(username);
             await this.getUser(username);
             await this.getImages({ username, exactMatch: true });
         } finally {
+            toast.dismiss(toastId);
             this.setScraping(false);
         }
     }
