@@ -55,7 +55,7 @@ export const UsernameSearch = observer(() => {
                         if (val.length === 0) {
                             // HACK: This timeout fixes an issue where the search results are
                             // hidden before the click gets registered.
-                            setTimeout(() => setSearchFocused(false), 150);
+                            setTimeout(() => setSearchFocused(false), 200);
                         } else {
                             setSearchFocused(false);
                         }
