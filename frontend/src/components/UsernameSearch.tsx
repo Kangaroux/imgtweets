@@ -7,7 +7,7 @@ import { UsernameSearchResults } from "./UsernameSearchResults";
 import "./UsernameSearch.scss";
 
 export const UsernameSearch = observer(() => {
-    const [focused, setFocused] = useState(false);
+    const [searchFocused, setSearchFocused] = useState(false);
     const [val, setVal] = useState("");
 
     const onPickUser = (user: API.User) => {
@@ -57,15 +57,23 @@ export const UsernameSearch = observer(() => {
                     onInput={onChange}
                     maxLength={15}
                     value={val}
-                    onFocus={() => setFocused(true)}
-                    onBlur={() => setFocused(false)}
+                    onFocus={() => setSearchFocused(true)}
+                    onBlur={() => {
+                        if (val.length === 0) {
+                            // HACK: This timeout fixes an issue where the search results are
+                            // hidden before the click gets registered.
+                            setTimeout(() => setSearchFocused(false), 150);
+                        } else {
+                            setSearchFocused(false);
+                        }
+                    }}
                 />
             </form>
             <UsernameSearchResults
                 onNewUser={onPickNewUser}
                 onSelect={onPickUser}
                 search={val}
-                showResults={val.length > 0 || focused}
+                showResults={val.length > 0 || searchFocused}
             />
         </div>
     );
