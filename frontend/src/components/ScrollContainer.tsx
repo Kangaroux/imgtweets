@@ -9,7 +9,7 @@ const IMAGES_PER_PAGE = 10;
 
 // The scroll container will display more images once the viewport has been
 // scrolled this far from the bottom of the page
-const infiniteScrollMargin = "250px";
+const infiniteScrollMargin = "300px 0px";
 
 export interface Props {
     images: API.Image[];
@@ -17,16 +17,36 @@ export interface Props {
 
 export const ScrollContainer = observer(({ images }: Props) => {
     const [page, setPage] = useState(1);
+    const [containerRef, setContainerRef] = useState<HTMLElement | null>(null);
     const [observer, setObserver] = useState<IntersectionObserver>();
 
     const displayedImages = useMemo(() => {
         return images.slice(0, page * IMAGES_PER_PAGE);
     }, [images, page]);
 
-    // Create the infinite scroll observer on mount
+    // Scroll the container back to the top if the images changed
     useEffect(() => {
+        if (!containerRef) {
+            return;
+        }
+
+        containerRef.scrollTop = 0;
+    }, [images, containerRef]);
+
+    // Create an observer with the container as the root element. Using the
+    // viewport as the root doesn't seem to work since the container is
+    // what's scrolling
+    const containerCallback = useCallback((el: HTMLElement | null) => {
+        setContainerRef(el);
+
+        if (!el || observer) {
+            observer?.disconnect();
+            return;
+        }
+
         const options: IntersectionObserverInit = {
-            rootMargin: infiniteScrollMargin + " 0px",
+            root: el,
+            rootMargin: infiniteScrollMargin,
         };
 
         const viewportObserver = new IntersectionObserver((entries) => {
@@ -36,19 +56,19 @@ export const ScrollContainer = observer(({ images }: Props) => {
 
             const e = entries[0];
 
+            console.log(e);
+
             if (e.isIntersecting) {
                 setPage((p) => p + 1);
             }
         }, options);
 
         setObserver(viewportObserver);
-
-        return () => observer?.disconnect();
     }, []);
 
     // Observe the footer element which tells us when we are close to
     // the bottom of the page
-    const ref = useCallback(
+    const footerCallback = useCallback(
         (el: HTMLElement | null) => {
             if (!observer || !el) {
                 return;
@@ -60,11 +80,13 @@ export const ScrollContainer = observer(({ images }: Props) => {
     );
 
     return (
-        <div className="scroll-container">
-            {displayedImages.map((img) => (
-                <Image image={img} key={img.id} />
-            ))}
-            {!!displayedImages.length && <span ref={ref} />}
+        <div className="scroll-container" ref={containerCallback}>
+            <div className="scroll-container-flex">
+                {displayedImages.map((img) => (
+                    <Image image={img} key={img.id} />
+                ))}
+            </div>
+            {!!displayedImages.length && <div ref={footerCallback} />}
         </div>
     );
 });
