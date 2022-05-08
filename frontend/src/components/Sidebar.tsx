@@ -21,6 +21,7 @@ export const Sidebar = observer(() => {
                     <a
                         href="https://github.com/Kangaroux/imgtweets"
                         target="_blank"
+                        title="View the project on Github"
                     >
                         Github
                     </a>

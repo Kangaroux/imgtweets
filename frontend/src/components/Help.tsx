@@ -11,10 +11,9 @@ export const Help = () => {
                         that a user has posted to their timeline.
                     </p>
                     <p>
-                        Start by opening the sidebar to the left and entering a
-                        Twitter username in the search box. If someone has
-                        searched for that user already, they will show up as a
-                        suggestion.
+                        Use the search box in the sidebar to lookup a Twitter
+                        username. If that username has been searched for before,
+                        they will show up as a suggested result.
                     </p>
                     <p>
                         This site is open source. Check it out on{" "}

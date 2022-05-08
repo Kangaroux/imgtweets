@@ -20,13 +20,13 @@ export const UsernameSearchResults = observer((props: Props) => {
     const userImageCount = (u: API.User) => {
         const data = store.data.find((d) => d.user.id === u.id);
         return data?.user.imageCount || 0;
-    }
+    };
 
     // The results to show if there's no search query. This returns a list
     // of the most recently added users.
     const defaultResults = useMemo(() => {
         const copy = [...store.data];
-        copy.sort((a, b) => a.user.createdAt < b.user.createdAt ? 1 : -1);
+        copy.sort((a, b) => (a.user.createdAt < b.user.createdAt ? 1 : -1));
         return copy.map((v) => v.user);
     }, [store.data.length]);
 
@@ -59,29 +59,34 @@ export const UsernameSearchResults = observer((props: Props) => {
     let inner;
 
     if (showResults) {
-        inner = <>{!!results &&
-            results.map((u) => {
-                return (
-                    <li onClick={() => onSelect(u)} key={u.id}>
-                        <img src={u.profileImageUrl} alt="" />{" "}
-                        <span>{u.username} ({userImageCount(u)})</span>
+        inner = (
+            <>
+                {!!results &&
+                    results.map((u) => {
+                        return (
+                            <li onClick={() => onSelect(u)} key={u.id}>
+                                <img src={u.profileImageUrl} alt="" />{" "}
+                                <span>
+                                    {u.username} ({userImageCount(u)})
+                                </span>
+                            </li>
+                        );
+                    })}
+                {!!search && (
+                    <li
+                        onClick={() => onNewUser(search)}
+                        title={`Search for user @${search}`}
+                    >
+                        <img
+                            src="https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
+                            alt=""
+                        />{" "}
+                        <span>{search}</span>
                     </li>
-                );
-            })}
-            {!!search && (
-                <li onClick={() => onNewUser(search)} title={`Search for user @${search}`}>
-                    <img
-                        src="https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
-                        alt=""
-                    />{" "}
-                    <span>{search}</span>
-                </li>
-            )}</>;
+                )}
+            </>
+        );
     }
 
-    return (
-        <ul className="search-results">
-            {inner}
-        </ul>
-    );
+    return <ul className="search-results">{inner}</ul>;
 });
