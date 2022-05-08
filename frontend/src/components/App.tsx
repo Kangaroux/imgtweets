@@ -11,10 +11,13 @@ export const App = observer(() => {
     return (
         <div>
             <Sidebar />
-            {store.currentImages.length ? <ScrollContainer images={store.currentImages} /> : <Help />}
+            {store.currentImages.length ? (
+                <ScrollContainer images={store.currentImages} />
+            ) : (
+                <Help />
+            )}
             <Toaster
                 position="bottom-center"
-
                 toastOptions={{
                     duration: 4000,
                     icon: null,
@@ -42,8 +45,8 @@ export const App = observer(() => {
                         style: {
                             backgroundColor: "#afd8d6",
                             color: "#000",
-                        }
-                    }
+                        },
+                    },
                 }}
             >
                 {(t) => (

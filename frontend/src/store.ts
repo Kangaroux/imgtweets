@@ -83,7 +83,9 @@ class Store {
 
         this.setScraping(true);
 
-        const toastId = toast.loading("Fetching timeline, this might take a moment.");
+        const toastId = toast.loading(
+            "Fetching timeline, this might take a moment."
+        );
 
         try {
             await API.scrapeUserImages(username);

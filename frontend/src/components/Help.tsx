@@ -19,7 +19,7 @@ export const Help = () => {
                     <p>
                         This site is open source. Check it out on{" "}
                         <a
-                            href="https://github.com/Kangaroux/twitter-image-viewer"
+                            href="https://github.com/Kangaroux/imgtweets"
                             target="_blank"
                         >
                             Github
@@ -27,8 +27,8 @@ export const Help = () => {
                         .
                     </p>
                     <p className="disclaimer">
-                        <strong>Disclaimer:</strong> imgtweets.com is not
-                        affiliated with or endorsed by Twitter, Inc.
+                        Disclaimer: imgtweets.com is not affiliated with or
+                        endorsed by Twitter, Inc.
                     </p>
                 </div>
             </div>

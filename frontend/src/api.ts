@@ -8,8 +8,8 @@ const err = {
     user404: "No user with that username exists.",
     generic: "An unexpected error occurred.",
     timeout: "The request timed out, did you lose internet?",
-    throttled: "The request was blocked due to rate limiting."
-}
+    throttled: "The request was blocked due to rate limiting.",
+};
 
 interface ListResponse {
     count: number;
@@ -92,7 +92,9 @@ export async function getImages(options: GetImagesOptions = {}) {
         onTimeout: () => toast.error(err.timeout),
     });
 
-    plausible("apiGetImages", { props: { ...options, time: Date.now() - earlier } });
+    plausible("apiGetImages", {
+        props: { ...options, time: Date.now() - earlier },
+    });
 
     if (!resp.ok) {
         if (resp.status === 429) {
@@ -135,7 +137,9 @@ export async function getUser(username: string) {
         }
     );
 
-    plausible("apiGetUser", { props: { username, time: Date.now() - earlier } });
+    plausible("apiGetUser", {
+        props: { username, time: Date.now() - earlier },
+    });
 
     if (!resp.ok) {
         if (resp.status === 404) {

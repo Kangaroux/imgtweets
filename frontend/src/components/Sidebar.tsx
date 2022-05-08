@@ -19,7 +19,7 @@ export const Sidebar = observer(() => {
                 </div>
                 <div className="sidebar-footer">
                     <a
-                        href="https://github.com/Kangaroux/twitter-image-viewer"
+                        href="https://github.com/Kangaroux/imgtweets"
                         target="_blank"
                     >
                         Github
