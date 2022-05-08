@@ -8,7 +8,9 @@
   <meta name="description"
     content="Image browser for Twitter. Easily view the images a user has posted to their timeline." />
   <title>imgtweets - Twitter Images</title>
-  <script defer data-domain="imgtweets.com" src="https://plausible.io/js/plausible.js"></script>
+
+  <!-- Plausible.io analytics, reverse proxied through nginx -->
+  <script defer data-api="/pevent" data-domain="imgtweets.com" src="/p.js"></script>
 </head>
 
 <body>
