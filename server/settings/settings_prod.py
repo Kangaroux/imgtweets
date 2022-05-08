@@ -27,3 +27,8 @@ DATABASES = {
         "PORT": getenv_or_fail("POSTGRES_PORT"),
     }
 }
+
+REST_FRAMEWORK = {
+    **REST_FRAMEWORK,
+    "DEFAULT_THROTTLE_RATES": {"standard": "30/minute", "fetch": "15/hour"},
+}

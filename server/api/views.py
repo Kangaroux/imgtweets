@@ -14,6 +14,7 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from api.models import Image, TwitterUser
 from api.serializers import ImageSerializer, TwitterUserSerializer
+from api.throttle import FetchThrottle, StandardThrottle
 from lib.scrape import Scraper
 from lib.twitter import TwitterErrorNotFound, TwitterRateLimit
 
@@ -82,13 +83,15 @@ class ImageAPI(ReadOnlyModelViewSet):
     FETCH_COOLDOWN = timedelta(minutes=30)
     SCRAPE_COUNT = 500
 
+    throttle_classes = [StandardThrottle]
+
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
     filter_backends = [ImageUsernameFilter, OrderingFilter]
     ordering_fields = "__all__"
     ordering = ["-tweeted_at"]
 
-    @action(detail=False)
+    @action(detail=False, throttle_classes=[FetchThrottle])
     def fetch(self, request, pk=None):
         username = request.query_params.get("username", "").strip()
 
@@ -146,6 +149,8 @@ class ImageAPI(ReadOnlyModelViewSet):
 
 
 class TwitterUserAPI(RetrieveMultipleMixin, ReadOnlyModelViewSet):
+    throttle_classes = [StandardThrottle]
+
     queryset = TwitterUser.objects.all()
     serializer_class = TwitterUserSerializer
 
