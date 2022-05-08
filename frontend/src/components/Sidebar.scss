@@ -15,6 +15,7 @@
 
 .sidebar-container {
     position: relative;
+    height: 100%;
 }
 
 .sidebar-menu-btn {
@@ -28,5 +29,24 @@
 }
 
 .sidebar-content {
+    position: relative;
     margin: 10px 20px;
+}
+
+.sidebar-footer {
+    position: absolute;
+    bottom: 0px;
+    padding: 15px 20px;
+    width: 100%;
+    overflow: hidden;
+
+    a,
+    a:visited {
+        color: #444;
+        font-weight: bold;
+
+        &:hover {
+            color: #666;
+        }
+    }
 }

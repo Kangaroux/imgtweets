@@ -13,9 +13,14 @@ export const Sidebar = observer(() => {
     if (open) {
         className += " sidebar-open";
         content = (
-            <div className="sidebar-content">
-                <UsernameSearch />
-            </div>
+            <>
+                <div className="sidebar-content">
+                    <UsernameSearch />
+                </div>
+                <div className="sidebar-footer">
+                    <a href="https://github.com/Kangaroux/twitter-image-viewer" target="_blank">Github</a>
+                </div>
+            </>
         );
     }
 
