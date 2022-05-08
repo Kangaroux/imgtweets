@@ -4,9 +4,12 @@ import { fetchWithTimeout } from "./util";
 const basePath = "/api";
 const defaultTimeout = 6000;
 
-const userDoesntExistToast = "No user with that username exists.";
-const unexpectedErrorToast = "An unexpected error occurred.";
-const timeoutToast = "The request timed out, did you lose internet?";
+const err = {
+    user404: "No user with that username exists.",
+    generic: "An unexpected error occurred.",
+    timeout: "The request timed out, did you lose internet?",
+    throttled: "The request was blocked due to rate limiting."
+}
 
 interface ListResponse {
     count: number;
@@ -52,7 +55,7 @@ export async function scrapeUserImages(username: string) {
         basePath + "/images/fetch?username=" + username,
         {
             timeout: defaultTimeout,
-            onTimeout: () => toast.error(timeoutToast),
+            onTimeout: () => toast.error(err.timeout),
         }
     );
 
@@ -60,9 +63,11 @@ export async function scrapeUserImages(username: string) {
 
     if (!resp.ok) {
         if (resp.status === 404) {
-            toast.error(userDoesntExistToast);
+            toast.error(err.user404);
+        } else if (resp.status === 429) {
+            toast.error(err.throttled);
         } else {
-            toast.error(unexpectedErrorToast);
+            toast.error(err.generic);
         }
 
         console.error(resp);
@@ -84,13 +89,18 @@ export async function getImages(options: GetImagesOptions = {}) {
     const earlier = Date.now();
     const resp = await fetchWithTimeout(basePath + "/images" + params, {
         timeout: defaultTimeout,
-        onTimeout: () => toast.error(timeoutToast),
+        onTimeout: () => toast.error(err.timeout),
     });
 
     plausible("apiGetImages", { props: { ...options, time: Date.now() - earlier } });
 
     if (!resp.ok) {
-        toast.error(unexpectedErrorToast);
+        if (resp.status === 429) {
+            toast.error(err.throttled);
+        } else {
+            toast.error(err.generic);
+        }
+
         console.error(resp);
         throw resp;
     }
@@ -121,7 +131,7 @@ export async function getUser(username: string) {
         basePath + "/users?username=" + username,
         {
             timeout: defaultTimeout,
-            onTimeout: () => toast.error(timeoutToast),
+            onTimeout: () => toast.error(err.timeout),
         }
     );
 
@@ -129,9 +139,11 @@ export async function getUser(username: string) {
 
     if (!resp.ok) {
         if (resp.status === 404) {
-            toast.error(userDoesntExistToast);
+            toast.error(err.user404);
+        } else if (resp.status === 429) {
+            toast.error(err.throttled);
         } else {
-            toast.error(unexpectedErrorToast);
+            toast.error(err.generic);
         }
 
         console.error(resp);
@@ -156,13 +168,18 @@ export async function getUsers() {
     const earlier = Date.now();
     const resp = await fetchWithTimeout(basePath + "/users", {
         timeout: defaultTimeout,
-        onTimeout: () => toast.error(timeoutToast),
+        onTimeout: () => toast.error(err.timeout),
     });
 
     plausible("apiGetUsers", { props: { time: Date.now() - earlier } });
 
     if (!resp.ok) {
-        toast.error(unexpectedErrorToast);
+        if (resp.status === 429) {
+            toast.error(err.throttled);
+        } else {
+            toast.error(err.generic);
+        }
+
         console.error(resp);
         throw resp;
     }
