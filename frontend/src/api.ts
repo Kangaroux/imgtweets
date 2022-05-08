@@ -47,6 +47,7 @@ export interface GetImagesOptions {
 }
 
 export async function scrapeUserImages(username: string) {
+    const earlier = Date.now();
     const resp = await fetchWithTimeout(
         basePath + "/images/fetch?username=" + username,
         {
@@ -54,6 +55,8 @@ export async function scrapeUserImages(username: string) {
             onTimeout: () => toast.error(timeoutToast),
         }
     );
+
+    plausible("apiFetch", { props: { username, time: Date.now() - earlier } });
 
     if (!resp.ok) {
         if (resp.status === 404) {
@@ -78,10 +81,13 @@ export async function getImages(options: GetImagesOptions = {}) {
         }
     }
 
+    const earlier = Date.now();
     const resp = await fetchWithTimeout(basePath + "/images" + params, {
         timeout: defaultTimeout,
         onTimeout: () => toast.error(timeoutToast),
     });
+
+    plausible("apiGetImages", { props: { options, time: Date.now() - earlier } });
 
     if (!resp.ok) {
         toast.error(unexpectedErrorToast);
@@ -110,6 +116,7 @@ export async function getImages(options: GetImagesOptions = {}) {
 }
 
 export async function getUser(username: string) {
+    const earlier = Date.now();
     const resp = await fetchWithTimeout(
         basePath + "/users?username=" + username,
         {
@@ -117,6 +124,8 @@ export async function getUser(username: string) {
             onTimeout: () => toast.error(timeoutToast),
         }
     );
+
+    plausible("apiGetUser", { props: { username, time: Date.now() - earlier } });
 
     if (!resp.ok) {
         if (resp.status === 404) {
@@ -144,10 +153,13 @@ export async function getUser(username: string) {
 }
 
 export async function getUsers() {
+    const earlier = Date.now();
     const resp = await fetchWithTimeout(basePath + "/users", {
         timeout: defaultTimeout,
         onTimeout: () => toast.error(timeoutToast),
     });
+
+    plausible("apiGetUsers", { props: { time: Date.now() - earlier } });
 
     if (!resp.ok) {
         toast.error(unexpectedErrorToast);
