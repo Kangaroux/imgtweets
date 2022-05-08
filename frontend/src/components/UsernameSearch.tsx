@@ -7,6 +7,7 @@ import { UsernameSearchResults } from "./UsernameSearchResults";
 import "./UsernameSearch.scss";
 
 export const UsernameSearch = observer(() => {
+    const [focused, setFocused] = useState(false);
     const [val, setVal] = useState("");
 
     const onPickUser = (user: API.User) => {
@@ -56,12 +57,15 @@ export const UsernameSearch = observer(() => {
                     onInput={onChange}
                     maxLength={15}
                     value={val}
+                    onFocus={() => setFocused(true)}
+                    onBlur={() => setFocused(false)}
                 />
             </form>
             <UsernameSearchResults
                 onNewUser={onPickNewUser}
                 onSelect={onPickUser}
                 search={val}
+                showResults={val.length > 0 || focused}
             />
         </div>
     );

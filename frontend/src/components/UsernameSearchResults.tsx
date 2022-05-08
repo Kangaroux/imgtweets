@@ -1,22 +1,39 @@
 import { observer } from "mobx-react-lite";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 import * as API from "../api";
 import { store } from "../store";
 import "./UsernameSearchResults.scss";
 
+const MAX_RESULTS = 10;
+
 export interface Props {
     onNewUser(username: string): void;
     onSelect(user: API.User): void;
     search: string;
+    showResults: boolean;
 }
 
 export const UsernameSearchResults = observer((props: Props) => {
-    const { onNewUser, onSelect, search } = props;
-    const results = store.usernameSearchResults;
+    const { onNewUser, onSelect, search, showResults } = props;
+
+    // The results to show if there's no search query. This returns a list
+    // of the most recently added users.
+    const defaultResults = useMemo(() => {
+        const copy = [...store.data];
+        copy.sort((a, b) => a.user.createdAt < b.user.createdAt ? 1 : -1);
+        return copy.map((v) => v.user);
+    }, [store.data.length]);
+
+    // Memoized result list. Uses the default results if there's no search
+    // query. Always truncates results to MAX_RESULTS
+    const results = useMemo(() => {
+        const source = search ? store.usernameSearchResults : defaultResults;
+        return source.slice(0, MAX_RESULTS);
+    }, [search, store.usernameSearchResults, defaultResults]);
 
     useEffect(() => {
-        const users: API.User[] = [];
+        let users: API.User[] = [];
 
         if (search && store.data.length) {
             const lowerVal = search.toLowerCase();
@@ -32,19 +49,20 @@ export const UsernameSearchResults = observer((props: Props) => {
 
         // Cleanup when the component is destroyed
         return () => store.setUsernameSearchResults([]);
-    }, [search]);
+    }, [defaultResults, search]);
 
-    return (
-        <ul className="search-results">
-            {!!results &&
-                results.map((u) => {
-                    return (
-                        <li onClick={() => onSelect(u)} key={u.id}>
-                            <img src={u.profileImageUrl} alt="" />{" "}
-                            <span>{u.username}</span>
-                        </li>
-                    );
-                })}
+    let inner;
+
+    if (showResults) {
+        inner = <>{!!results &&
+            results.map((u) => {
+                return (
+                    <li onClick={() => onSelect(u)} key={u.id}>
+                        <img src={u.profileImageUrl} alt="" />{" "}
+                        <span>{u.username}</span>
+                    </li>
+                );
+            })}
             {!!search && (
                 <li onClick={() => onNewUser(search)}>
                     <img
@@ -53,7 +71,12 @@ export const UsernameSearchResults = observer((props: Props) => {
                     />{" "}
                     <span>{search}</span>
                 </li>
-            )}
+            )}</>;
+    }
+
+    return (
+        <ul className="search-results">
+            {inner}
         </ul>
     );
 });
