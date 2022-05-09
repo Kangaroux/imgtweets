@@ -52,7 +52,6 @@ class RetrieveMultipleMixin(RetrieveModelMixin):
 
 class ImageAPI(ReadOnlyModelViewSet):
     RESCRAPE_TIME = timedelta(hours=4)
-    SCRAPE_COUNT = 500
     throttle_classes = [StandardThrottle]
 
     queryset = Image.objects.all()
@@ -82,7 +81,7 @@ class ImageAPI(ReadOnlyModelViewSet):
                         )
                         scraper = Scraper(settings.TWITTER_API_TOKEN)
                         scraper.scrape_timeline(
-                            count=self.SCRAPE_COUNT, username=user.username
+                            count=settings.SCRAPE_COUNT, username=user.username
                         )
                     except:
                         logger.exception(
@@ -118,7 +117,7 @@ class ImageAPI(ReadOnlyModelViewSet):
 
         try:
             tweet_count, image_count, added_count = scraper.scrape_timeline(
-                count=self.SCRAPE_COUNT,
+                count=settings.SCRAPE_COUNT,
                 username=username,
             )
         except TwitterErrorNotFound:

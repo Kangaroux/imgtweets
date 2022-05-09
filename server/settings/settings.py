@@ -135,3 +135,6 @@ STATIC_ROOT = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 TWITTER_API_TOKEN = os.getenv("TWITTER_API_TOKEN")
+
+# The number of tweets to scrape
+SCRAPE_COUNT = 500

@@ -12,7 +12,7 @@ class Command(BaseCommand):
             "-c",
             "--count",
             type=int,
-            default=50,
+            default=settings.SCRAPE_COUNT,
             help="The max number of tweets to scrape.",
         )
         parser.add_argument(
