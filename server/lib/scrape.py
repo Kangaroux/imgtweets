@@ -57,7 +57,7 @@ class Scraper:
         user.last_scraped_at = timezone.now()
         user.save()
 
-        logger.info(f"Scrape start")
+        logger.info(f"Scrape start for user {user.username}")
 
         if since:
             logger.debug(f"Only fetching tweets newer than {since}")
