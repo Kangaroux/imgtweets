@@ -16,22 +16,24 @@ class Command(BaseCommand):
             help="The max number of tweets to scrape.",
         )
         parser.add_argument(
-            "-t",
-            "--token",
-            default=settings.TWITTER_API_TOKEN,
-            help="The twitter API token. Defaults to the TWITTER_API_TOKEN env.",
+            "-f",
+            "--force",
+            action="store_true",
+            default=False,
+            help="If set, rescrapes all images for the user, not just the most recent ones",
         )
         parser.add_argument(
             "username",
             help="The twitter username to scrape.",
         )
 
-    def handle(self, username: str, count: int, token: str, **options):
+    def handle(self, username: str, count: int, force: bool, **options):
+        token = settings.TWITTER_API_TOKEN
+
         if not token:
             raise CommandError(
-                "Twitter API token is missing. Please provide it with the --token option, "
-                "or set the TWITTER_API_TOKEN environment variable."
+                "Twitter API token is missing. Please set the TWITTER_API_TOKEN env."
             )
 
         scraper = Scraper(token)
-        scraper.scrape_timeline(count=count, username=username)
+        scraper.scrape_timeline(count=count, username=username, only_recent=not force)

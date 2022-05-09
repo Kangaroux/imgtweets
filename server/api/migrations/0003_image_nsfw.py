@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0002_twitteruser_last_scraped_at_alter_image_created_at_and_more'),
+        ("api", "0002_twitteruser_last_scraped_at_alter_image_created_at_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='image',
-            name='nsfw',
+            model_name="image",
+            name="nsfw",
             field=models.BooleanField(default=False),
             preserve_default=False,
         ),

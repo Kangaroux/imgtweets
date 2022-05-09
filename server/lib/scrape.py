@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from typing import List
 
 from django.db import IntegrityError
 from django.utils import timezone
@@ -21,11 +22,16 @@ class Scraper:
         count: int,
         username: str = None,
         twitter_id: str = None,
+        only_recent=True,
     ):
         """
         Scrapes a user's timeline for images and adds them to the database.
 
         `username` or `twitter_id` must be given, but not both.
+
+        If `only_recent` is True, then only tweets from the last scrape will
+        be retrieved. Otherwise, it will rescrape everything, even images that
+        already exist. Existing images will be updated.
 
         Returns a 3-tuple with some stats from the scrape:
             - The number of tweets retrieved
@@ -42,7 +48,10 @@ class Scraper:
         else:
             logger.debug("Found existing user in database")
 
-        since = user.last_scraped_at
+        since = None
+
+        if only_recent:
+            since = user.last_scraped_at
 
         # Set this early to try and mitigate simultaneous fetch requests
         user.last_scraped_at = timezone.now()
@@ -52,6 +61,8 @@ class Scraper:
 
         if since:
             logger.debug(f"Only fetching tweets newer than {since}")
+        else:
+            logger.debug("Fetching everything (only_recent=False)")
 
         tweets = self.api.get_user_media_tweets_auto_paginate(
             user.twitter_id,
@@ -63,39 +74,40 @@ class Scraper:
         if not tweets:
             return
 
-        images = []
+        image_kwargs: List[dict] = []
 
         for t in tweets:
             for m in t.media:
                 if m.type != TwitterMediaType.Photo:
                     continue
 
-                images.append(
-                    Image(
-                        key=m.key,
-                        nsfw=m.nsfw,
-                        tweet_id=t.tweet_id,
-                        url=m.url,
-                        user=user,
-                        tweeted_at=t.created_at,
-                    )
+                image_kwargs.append(
+                    {
+                        "key": m.key,
+                        "nsfw": m.nsfw,
+                        "tweet_id": t.tweet_id,
+                        "url": m.url,
+                        "user": user,
+                        "tweeted_at": t.created_at,
+                    }
                 )
 
-        logger.debug(f"Found {len(images)} images")
+        logger.debug(f"Found {len(image_kwargs)} images")
 
         added = 0
 
-        for obj in images:
-            try:
-                obj.save()
+        for kwargs in image_kwargs:
+            _, created = Image.objects.update_or_create(
+                key=kwargs["key"], defaults=kwargs
+            )
+
+            if created:
                 added += 1
-            except IntegrityError:
-                pass
 
         logger.debug(f"Added {added} new images")
         logger.info("Scrape end")
 
-        return (len(tweets), len(images), added)
+        return (len(tweets), len(image_kwargs), added)
 
     def _get_user_object(self, username: str = None, twitter_id: str = None):
         """
