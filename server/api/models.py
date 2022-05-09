@@ -28,6 +28,7 @@ class TwitterUser(BaseModel):
 class Image(BaseModel):
     # The media key of the image. This is basically the Twitter ID
     key = models.CharField(max_length=50, unique=True)
+    nsfw = models.BooleanField()
     url = models.CharField(max_length=255)
     user = models.ForeignKey(TwitterUser, on_delete=models.CASCADE)
     tweet_id = models.CharField(max_length=20)
