@@ -60,9 +60,19 @@ class ImageAPI(ReadOnlyModelViewSet):
     ordering_fields = "__all__"
     ordering = ["-tweeted_at"]
 
+    def filter_queryset(self, queryset):
+        qs = super().filter_queryset(queryset)
+        username = self.request.query_params.get("username", "").strip()
+
+        if username:
+            qs = qs.filter(user__username__iexact=username)
+
+        return qs
+
     def list(self, request, *args, **kwargs):
         username = request.query_params.get("username", "").strip()
 
+        # If a username was provided, try rescraping their timeline first if needed
         if username:
             try:
                 user: TwitterUser = TwitterUser.objects.get(username__iexact=username)
