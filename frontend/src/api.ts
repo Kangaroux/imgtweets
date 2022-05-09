@@ -24,6 +24,7 @@ export interface Image {
     updatedAt: string;
 
     key: string;
+    nsfw: boolean;
     tweetedAt: string;
     tweetId: string;
     tweetUrl: string;
@@ -114,14 +115,15 @@ export async function getImages(options: GetImagesOptions = {}) {
     for (const p of data.results) {
         images.push({
             id: p.id,
-            userId: p.user_id,
-            tweetUrl: p.tweet_url,
             createdAt: p.created_at,
             updatedAt: p.updated_at,
             key: p.key,
-            url: p.url,
-            tweetId: p.tweet_id,
+            nsfw: p.nsfw,
             tweetedAt: p.tweeted_at,
+            tweetId: p.tweet_id,
+            tweetUrl: p.tweet_url,
+            url: p.url,
+            userId: p.user_id,
         });
     }
 

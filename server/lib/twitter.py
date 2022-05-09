@@ -37,6 +37,7 @@ class MediaData:
     key: str
     type: TwitterMediaType
     url: str
+    nsfw = False
 
 
 @dataclass
@@ -45,6 +46,7 @@ class TweetData:
     media: List[MediaData]
     tweet_id: str
     user_id: str
+    nsfw: bool
 
 
 class TwitterAPI:
@@ -116,7 +118,7 @@ class TwitterAPI:
             "expansions": "attachments.media_keys",
             "media.fields": "type,url",
             "max_results": limit,
-            "tweet.fields": "created_at",
+            "tweet.fields": "created_at,possibly_sensitive",
         }
 
         if pagination_token:
@@ -156,14 +158,19 @@ class TwitterAPI:
             created_at = datetime.strptime(created_at_str, self.DATETIME_FORMAT)
             created_at = created_at.astimezone(timezone.utc)
 
-            tweets.append(
-                TweetData(
-                    media=[media[key] for key in media_keys],
-                    user_id=twitter_id,
-                    tweet_id=data["id"],
-                    created_at=created_at,
-                )
+            tweet_data = TweetData(
+                media=[media[key] for key in media_keys],
+                user_id=twitter_id,
+                tweet_id=data["id"],
+                created_at=created_at,
+                nsfw=data.get("possibly_sensitive", False),
             )
+
+            if tweet_data.nsfw:
+                for m in tweet_data.media:
+                    m.nsfw = True
+
+            tweets.append(tweet_data)
 
         pagination_token = resp.json().get("meta", {}).get("next_token")
 

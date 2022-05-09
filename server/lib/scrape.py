@@ -73,6 +73,7 @@ class Scraper:
                 images.append(
                     Image(
                         key=m.key,
+                        nsfw=m.nsfw,
                         tweet_id=t.tweet_id,
                         url=m.url,
                         user=user,
