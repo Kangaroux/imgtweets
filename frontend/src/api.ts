@@ -90,7 +90,7 @@ export async function getImages(options: GetImagesOptions = {}, page = 1) {
 
     const earlier = Date.now();
     const resp = await fetchWithTimeout(
-        `${basePath}/users?page=${page}${params}`,
+        `${basePath}/images?page=${page}${params}`,
         {
             timeout: defaultTimeout,
             onTimeout: () => toast.error(err.timeout),
