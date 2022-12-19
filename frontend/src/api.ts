@@ -172,9 +172,9 @@ export async function getUser(username: string) {
     return user;
 }
 
-export async function getUsers() {
+export async function getUsers(page = 1) {
     const earlier = Date.now();
-    const resp = await fetchWithTimeout(basePath + "/users", {
+    const resp = await fetchWithTimeout(`${basePath}/users?page=${page}`, {
         timeout: defaultTimeout,
         onTimeout: () => toast.error(err.timeout),
     });
@@ -192,7 +192,7 @@ export async function getUsers() {
         throw resp;
     }
 
-    const users: User[] = [];
+    let users: User[] = [];
     const data = (await resp.json()) as ListResponse;
 
     for (const u of data.results) {
@@ -206,6 +206,10 @@ export async function getUsers() {
             username: u.username,
             imageCount: u.image_count,
         });
+    }
+
+    if(data.next) {
+        users = users.concat(await getUsers(page + 1));
     }
 
     return users;
