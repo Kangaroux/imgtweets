@@ -77,22 +77,25 @@ export async function scrapeUserImages(username: string) {
     }
 }
 
-export async function getImages(options: GetImagesOptions = {}) {
+export async function getImages(options: GetImagesOptions = {}, page = 1) {
     let params = "";
 
     if (options.username) {
         if (options.exactMatch) {
-            params = "?username=" + options.username;
+            params = "&username=" + options.username;
         } else {
-            params = "?username_like=" + options.username;
+            params = "&username_like=" + options.username;
         }
     }
 
     const earlier = Date.now();
-    const resp = await fetchWithTimeout(basePath + "/images" + params, {
-        timeout: defaultTimeout,
-        onTimeout: () => toast.error(err.timeout),
-    });
+    const resp = await fetchWithTimeout(
+        `${basePath}/users?page=${page}${params}`,
+        {
+            timeout: defaultTimeout,
+            onTimeout: () => toast.error(err.timeout),
+        }
+    );
 
     plausible("apiGetImages", {
         props: { ...options, time: Date.now() - earlier },
@@ -109,7 +112,7 @@ export async function getImages(options: GetImagesOptions = {}) {
         throw resp;
     }
 
-    const images: Image[] = [];
+    let images: Image[] = [];
     const data = (await resp.json()) as ListResponse;
 
     for (const p of data.results) {
@@ -125,6 +128,10 @@ export async function getImages(options: GetImagesOptions = {}) {
             url: p.url,
             userId: p.user_id,
         });
+    }
+
+    if (data.next) {
+        images = images.concat(await getImages(options, page + 1));
     }
 
     return images;
@@ -208,7 +215,7 @@ export async function getUsers(page = 1) {
         });
     }
 
-    if(data.next) {
+    if (data.next) {
         users = users.concat(await getUsers(page + 1));
     }
 
