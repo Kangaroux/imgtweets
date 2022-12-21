@@ -55,7 +55,7 @@ class ImageAPI(ReadOnlyModelViewSet):
     RESCRAPE_TIME = timedelta(hours=4)
     throttle_classes = [StandardThrottle]
 
-    queryset = Image.objects.all()
+    queryset = Image.objects.select_related("user")
     serializer_class = ImageSerializer
     filter_backends = [OrderingFilter]
     ordering_fields = "__all__"
