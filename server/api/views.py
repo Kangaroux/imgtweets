@@ -161,7 +161,7 @@ class TwitterUserAPI(RetrieveMultipleMixin, ReadOnlyModelViewSet):
 
         if username:
             user = get_object_or_404(
-                TwitterUser.objects.filter(username__iexact=username)
+                self.get_queryset().filter(username__iexact=username)
             )
             serializer = TwitterUserSerializer(user)
             return Response(serializer.data)
