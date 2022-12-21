@@ -4,6 +4,7 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.utils import timezone
+from django.db.models import Count
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, NotFound, Throttled, ValidationError
 from rest_framework.filters import BaseFilterBackend, OrderingFilter
@@ -152,11 +153,8 @@ class ImageAPI(ReadOnlyModelViewSet):
 class TwitterUserAPI(RetrieveMultipleMixin, ReadOnlyModelViewSet):
     throttle_classes = [StandardThrottle]
 
-    queryset = TwitterUser.objects.all()
+    queryset = TwitterUser.objects.annotate(image_count=Count("image")).order_by("id")
     serializer_class = TwitterUserSerializer
-
-    def get_queryset(self):
-        return TwitterUser.objects.all().order_by("id")
 
     def list(self, request, *args, **kwargs):
         username = request.query_params.get("username", "").strip()

@@ -4,7 +4,7 @@ from api.models import Image, TwitterUser
 
 
 class TwitterUserSerializer(serializers.ModelSerializer):
-    image_count = serializers.IntegerField(source="get_image_count")
+    image_count = serializers.IntegerField()
 
     class Meta:
         model = TwitterUser

@@ -21,9 +21,6 @@ class TwitterUser(BaseModel):
     def __str__(self):
         return self.username
 
-    def get_image_count(self):
-        return self.image_set.count()
-
 
 class Image(BaseModel):
     # The media key of the image. This is basically the Twitter ID
