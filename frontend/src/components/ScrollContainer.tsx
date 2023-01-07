@@ -58,8 +58,6 @@ export const ScrollContainer = observer(({ images, user }: Props) => {
 
             const e = entries[0];
 
-            console.log(e);
-
             if (e.isIntersecting) {
                 setPage((p) => p + 1);
             }

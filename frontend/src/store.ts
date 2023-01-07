@@ -103,6 +103,10 @@ class Store {
         }
     }
 
+    setCurrentUser(user: API.User) {
+        this.currentUser = user;
+    }
+
     setSidebarOpen(open: boolean) {
         this.sidebarOpen = open;
     }

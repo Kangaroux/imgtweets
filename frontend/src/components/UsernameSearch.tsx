@@ -13,6 +13,7 @@ export const UsernameSearch = observer(() => {
     const onPickUser = (user: API.User) => {
         store.setSidebarOpen(false);
         store.getImages({ exactMatch: true, username: user.username });
+        store.setCurrentUser(user);
     };
 
     const onPickNewUser = (username: string) => {
