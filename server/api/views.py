@@ -1,5 +1,6 @@
 import logging
 from datetime import timedelta
+from typing import List
 
 from django.conf import settings
 from django.utils import timezone
@@ -13,6 +14,7 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from api.models import Image, TwitterUser, USERNAME_LENGTH
 from api.serializers import ImageSerializer, TwitterUserSerializer
 from api.throttle import FetchThrottle, StandardThrottle
+from lib.relevance import sort_users_by_best_match
 from lib.scrape import Scraper
 from lib.twitter import TwitterErrorNotFound, TwitterRateLimit
 
@@ -150,10 +152,13 @@ class TwitterUserAPI(ReadOnlyModelViewSet):
                 qs = qs.filter(username__icontains=search)
 
         page = self.paginate_queryset(qs)
+        users = sort_users_by_best_match(
+            list(page) if page is not None else list(qs), search
+        )
 
         if page is not None:
-            serializer = self.get_serializer(page, many=True)
+            serializer = self.get_serializer(users, many=True)
             return self.get_paginated_response(serializer.data)
 
-        serializer = self.get_serializer(qs, many=True)
+        serializer = self.get_serializer(users, many=True)
         return Response(serializer.data)
