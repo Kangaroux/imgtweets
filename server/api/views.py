@@ -1,5 +1,4 @@
 import logging
-import math
 from datetime import timedelta
 
 from django.conf import settings
@@ -7,9 +6,8 @@ from django.utils import timezone
 from django.db.models import Count
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, NotFound, Throttled, ValidationError
-from rest_framework.filters import BaseFilterBackend, OrderingFilter
+from rest_framework.filters import OrderingFilter
 from rest_framework.generics import get_object_or_404
-from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
@@ -20,35 +18,6 @@ from lib.scrape import Scraper
 from lib.twitter import TwitterErrorNotFound, TwitterRateLimit
 
 logger = logging.getLogger(__name__)
-
-
-class RetrieveMultipleMixin(RetrieveModelMixin):
-    """
-    Mixin that allows retrieving multiple instances at once by specifying
-    multiple lookups in the URL. If a single lookup is provided it returns
-    just that object. If there are multiple, comma separated lookups, it
-    always returns a paginated response.
-    """
-
-    def retrieve(self, request, *args, **kwargs):
-        lookup = kwargs.get(self.lookup_field)
-        lookup_list = list(set([x.strip() for x in lookup.split(",")]))
-
-        # Return multiple results if the request includes multiple lookups
-        # e.g. /users/1,2,3
-        if len(lookup_list) > 1:
-            filter_kwargs = {f"{self.lookup_field}__in": lookup_list}
-            qs = self.get_queryset().filter(**filter_kwargs)
-            page = self.paginate_queryset(qs)
-
-            if page is not None:
-                serializer = self.get_serializer(page, many=True)
-                return self.get_paginated_response(serializer.data)
-
-            serializer = self.get_serializer(qs, many=True)
-            return Response(serializer.data)
-
-        return super().retrieve(request, *args, **kwargs)
 
 
 class ImageAPI(ReadOnlyModelViewSet):
@@ -150,7 +119,7 @@ class ImageAPI(ReadOnlyModelViewSet):
         )
 
 
-class TwitterUserAPI(RetrieveMultipleMixin, ReadOnlyModelViewSet):
+class TwitterUserAPI(ReadOnlyModelViewSet):
     throttle_classes = [StandardThrottle]
 
     queryset = TwitterUser.objects.annotate(image_count=Count("image")).order_by("id")
