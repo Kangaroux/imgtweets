@@ -126,13 +126,22 @@ class TwitterUserAPI(ReadOnlyModelViewSet):
     serializer_class = TwitterUserSerializer
 
     def list(self, request, *args, **kwargs):
-        username = request.query_params.get("username", "").strip()
+        is_exact = request.query_params.get("exact", "0") == "1"
+        search = request.query_params.get("search", "").strip()
 
-        if username:
-            user = get_object_or_404(
-                self.get_queryset().filter(username__iexact=username)
-            )
-            serializer = TwitterUserSerializer(user)
-            return Response(serializer.data)
+        qs = self.filter_queryset(self.get_queryset())
 
-        return super().list(request, *args, **kwargs)
+        if search:
+            if is_exact:
+                qs = qs.filter(username__iexact=search)
+            else:
+                qs = qs.filter(username__icontains=search)
+
+        page = self.paginate_queryset(qs)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
