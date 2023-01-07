@@ -100,13 +100,16 @@ CACHES = {
 
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 1000,
+    "PAGE_SIZE": 500,
     "DEFAULT_THROTTLE_CLASSES": [
         "api.throttle.StandardThrottle",
         "api.throttle.FetchThrottle",
     ],
     # Throttling is effectively disabled in dev, see settings_prod.py for actual limits
-    "DEFAULT_THROTTLE_RATES": {"standard": "100/second", "fetch": "100/second"},
+    "DEFAULT_THROTTLE_RATES": {
+        "fetch": "100/second",
+        "standard": "100/second",
+    },
 }
 
 AUTH_PASSWORD_VALIDATORS = [

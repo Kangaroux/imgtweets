@@ -30,5 +30,8 @@ DATABASES = {
 
 REST_FRAMEWORK = {
     **REST_FRAMEWORK,
-    "DEFAULT_THROTTLE_RATES": {"standard": "30/minute", "fetch": "15/hour"},
+    "DEFAULT_THROTTLE_RATES": {
+        "fetch": "15/hour",
+        "standard": "30/minute",
+    },
 }
