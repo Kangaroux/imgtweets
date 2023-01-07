@@ -4,6 +4,8 @@ import { fetchWithTimeout } from "./util";
 const basePath = "/api";
 const defaultTimeout = 6000;
 
+type SortOptions = "popular" | "match" | "newest" | "oldest";
+
 const err = {
     user404: "No user with that username exists.",
     generic: "An unexpected error occurred.",
@@ -137,10 +139,10 @@ export async function getImages(options: GetImagesOptions = {}, page = 1) {
     return images;
 }
 
-export async function getUser(username: string) {
+export async function getUser(username: string): Promise<User | null> {
     const earlier = Date.now();
     const resp = await fetchWithTimeout(
-        basePath + "/users?username=" + username,
+        basePath + "/users?search=" + username + "&exact=1",
         {
             timeout: defaultTimeout,
             onTimeout: () => toast.error(err.timeout),
@@ -161,32 +163,44 @@ export async function getUser(username: string) {
         }
 
         console.error(resp);
-        throw resp;
+        return null;
     }
 
-    const data = await resp.json();
+    const data = (await resp.json()) as ListResponse;
+
+    if(data.count === 0) {
+        toast.error(err.user404);
+        return null;
+    }
+
     const user: User = {
-        id: data.id,
-        createdAt: data.created_at,
-        updatedAt: data.updated_at,
-        lastScrapedAt: data.last_scraped_at,
-        profileImageUrl: data.profile_image_url,
-        twitterId: data.twitter_id,
-        username: data.username,
-        imageCount: data.image_count,
+        id: data.results[0].id,
+        createdAt: data.results[0].created_at,
+        updatedAt: data.results[0].updated_at,
+        lastScrapedAt: data.results[0].last_scraped_at,
+        profileImageUrl: data.results[0].profile_image_url,
+        twitterId: data.results[0].twitter_id,
+        username: data.results[0].username,
+        imageCount: data.results[0].image_count,
     };
 
     return user;
 }
 
-export async function getUsers(page = 1) {
+export async function listUsers({page, search, sort}: {page?: number, search?: string, sort?: SortOptions}) {
     const earlier = Date.now();
-    const resp = await fetchWithTimeout(`${basePath}/users?page=${page}`, {
+
+    let url = `${basePath}/users?page=${page ?? 1}`;
+
+    if(search) url += "&search=" + search;
+    if(sort) url += "&sort=" + sort;
+
+    const resp = await fetchWithTimeout(url, {
         timeout: defaultTimeout,
         onTimeout: () => toast.error(err.timeout),
     });
 
-    plausible("apiGetUsers", { props: { time: Date.now() - earlier } });
+    plausible("apilistUsers", { props: { time: Date.now() - earlier } });
 
     if (!resp.ok) {
         if (resp.status === 429) {
@@ -213,10 +227,6 @@ export async function getUsers(page = 1) {
             username: u.username,
             imageCount: u.image_count,
         });
-    }
-
-    if (data.next) {
-        users = users.concat(await getUsers(page + 1));
     }
 
     return users;

@@ -11,17 +11,12 @@ export const UsernameSearch = observer(() => {
     const [val, setVal] = useState("");
 
     const onPickUser = (user: API.User) => {
-        store.setCurrentImagesToUser(user.username);
         store.setSidebarOpen(false);
+        store.getImages({ exactMatch: true, username: user.username });
     };
 
     const onPickNewUser = (username: string) => {
-        const fn = async (username: string) => {
-            await store.scrapeImages(username);
-            await store.setCurrentImagesToUser(username);
-        };
-
-        fn(username);
+        store.scrapeImages(username);
         store.setSidebarOpen(false);
     };
 

@@ -3,65 +3,31 @@ import toast from "react-hot-toast";
 
 import * as API from "./api";
 
-export interface UserImages {
-    images?: API.Image[];
-    user: API.User;
-}
-
 class Store {
-    // All of the user and image data retrieved from the API
-    data: UserImages[] = [];
-
-    // This set keeps track of all the usernames that are currently loaded in the store.
-    // It functions as a quick lookup to know if we have a user's info or not
-    usernames = new Set<string>();
-
     // The images currently being displayed
     currentImages: API.Image[] = [];
 
+    currentUser: API.User | null = null;
+
     // A list of users matching the username search query
     usernameSearchResults: API.User[] = [];
+
+    // A list of users to show in the search results when the query is empty. This just shows
+    // the most recently scraped users
+    defaultSearchResults: API.User[] = [];
 
     // Start with the sidebar open for larger screens only
     sidebarOpen = document.body.clientWidth > 640;
 
     // Which APIs are currently in use
     fetching = {
-        scraping: false,
         images: false,
-        users: false,
+        scraping: false,
+        userSearch: false,
     };
 
     constructor() {
         makeAutoObservable(this);
-    }
-
-    get usernameList() {
-        return Array.from(this.usernames.keys());
-    }
-
-    addUser(user: API.User) {
-        if (this.usernames.has(user.username)) {
-            return;
-        }
-
-        this.usernames.add(user.username);
-        this.data.push({ user });
-    }
-
-    addImages(images: API.Image[]) {
-        for (const img of images) {
-            const userData = this.data.find(
-                (data) => data.user.id === img.userId
-            ) as UserImages;
-
-            if (userData.images == null) {
-                userData.images = [];
-            }
-
-            img.user = userData.user;
-            userData.images = userData.images.concat(img);
-        }
     }
 
     setScraping(isScraping: boolean) {
@@ -72,8 +38,8 @@ class Store {
         this.fetching.images = isFetching;
     }
 
-    setFetchingUsers(isFetching: boolean) {
-        this.fetching.users = isFetching;
+    setFetchingUserSearch(isFetching: boolean) {
+        this.fetching.userSearch = isFetching;
     }
 
     async scrapeImages(username: string, force = false) {
@@ -106,80 +72,35 @@ class Store {
 
         try {
             const images = await API.getImages(options);
-
-            if (images !== null) {
-                this.addImages(images);
-            }
+            runInAction(() => (this.currentImages = images));
         } finally {
             this.setFetchingImages(false);
         }
     }
 
     async getUser(username: string, force = false) {
-        if (this.fetching.users && !force) {
+        const user = await API.getUser(username);
+        runInAction(() => (this.currentUser = user));
+    }
+
+    async fetchMostPopularUsers() {
+        const users = await API.listUsers({ sort: "popular" });
+        runInAction(() => (this.defaultSearchResults = users));
+    }
+
+    async searchUsers(search: string) {
+        if (this.fetching.userSearch || !search) {
             return;
         }
 
-        this.setFetchingUsers(true);
+        this.setFetchingUserSearch(true);
 
         try {
-            const user = await API.getUser(username);
-
-            if (user !== null) {
-                this.addUser(user);
-            }
+            const users = await API.listUsers({ search, sort: "match" });
+            runInAction(() => (this.usernameSearchResults = users));
         } finally {
-            this.setFetchingUsers(false);
+            this.setFetchingUserSearch(false);
         }
-    }
-
-    async getUsers(force = false) {
-        if (this.fetching.users && !force) {
-            return;
-        }
-
-        this.setFetchingUsers(true);
-
-        try {
-            const users = await API.getUsers();
-
-            if (users !== null) {
-                for (const u of users) {
-                    this.addUser(u);
-                }
-            }
-        } finally {
-            this.setFetchingUsers(false);
-        }
-    }
-
-    async setCurrentImagesToUser(username: string) {
-        // Find the user using a case insensitive match
-        const user = this.data.find(
-            (u) => u.user.username.toLowerCase() === username.toLowerCase()
-        ) as UserImages;
-
-        if (!user) {
-            console.warn(
-                `Tried to add images for ${username} but their info hasn't been fetched yet`
-            );
-            return;
-        } else if (user.images == null) {
-            console.debug(
-                "setCurrentImagesToUser: User images are missing, fetching..."
-            );
-
-            await this.getImages({
-                exactMatch: true,
-                username,
-            });
-        }
-
-        runInAction(() => (this.currentImages = user.images!));
-    }
-
-    setUsernameSearchResults(users: API.User[]) {
-        this.usernameSearchResults = users;
     }
 
     setSidebarOpen(open: boolean) {

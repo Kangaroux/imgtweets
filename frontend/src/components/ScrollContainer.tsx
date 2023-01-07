@@ -13,9 +13,10 @@ const infiniteScrollMargin = "300px 0px";
 
 export interface Props {
     images: API.Image[];
+    user: API.User | null;
 }
 
-export const ScrollContainer = observer(({ images }: Props) => {
+export const ScrollContainer = observer(({ images, user }: Props) => {
     const [page, setPage] = useState(1);
     const [containerRef, setContainerRef] = useState<HTMLElement | null>(null);
     const [observer, setObserver] = useState<IntersectionObserver>();
@@ -83,9 +84,10 @@ export const ScrollContainer = observer(({ images }: Props) => {
     return (
         <div className="scroll-container" ref={containerCallback}>
             <div className="scroll-container-flex">
-                {displayedImages.map((img) => (
-                    <Image image={img} key={img.id} />
-                ))}
+                {user &&
+                    displayedImages.map((img) => (
+                        <Image image={img} user={user} key={img.id} />
+                    ))}
             </div>
             {!!displayedImages.length && <div ref={footerCallback} />}
         </div>

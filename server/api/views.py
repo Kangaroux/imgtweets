@@ -136,12 +136,13 @@ class ImageAPI(ReadOnlyModelViewSet):
 class TwitterUserAPI(ReadOnlyModelViewSet):
     throttle_classes = [StandardThrottle]
 
-    queryset = TwitterUser.objects.annotate(image_count=Count("image")).order_by("id")
+    queryset = TwitterUser.objects.annotate(image_count=Count("image"))
     serializer_class = TwitterUserSerializer
 
     def list(self, request, *args, **kwargs):
         is_exact = request.query_params.get("exact", "0") == "1"
         search = request.query_params.get("search", "").strip()[:USERNAME_LENGTH]
+        sort = request.query_params.get("sort", "newest")
 
         qs = self.filter_queryset(self.get_queryset())
 
@@ -151,14 +152,22 @@ class TwitterUserAPI(ReadOnlyModelViewSet):
             else:
                 qs = qs.filter(username__icontains=search)
 
+        if sort == "popular":
+            qs = qs.order_by("-num_hits")
+        elif sort == "newest":
+            qs = qs.order_by("-id")
+        elif sort == "oldest":
+            qs = qs.order_by("id")
+
         page = self.paginate_queryset(qs)
-        users = sort_users_by_best_match(
-            list(page) if page is not None else list(qs), search
-        )
+        results = list(page) if page is not None else list(qs)
+
+        if sort == "match":
+            results = sort_users_by_best_match(results, search)
 
         if page is not None:
-            serializer = self.get_serializer(users, many=True)
+            serializer = self.get_serializer(results, many=True)
             return self.get_paginated_response(serializer.data)
 
-        serializer = self.get_serializer(users, many=True)
+        serializer = self.get_serializer(results, many=True)
         return Response(serializer.data)

@@ -9,9 +9,10 @@ const preloadDistance = "250px";
 
 export interface Props {
     image: API.Image;
+    user: API.User;
 }
 
-export const Image = observer(({ image }: Props) => {
+export const Image = observer(({ image, user }: Props) => {
     const [loaded, setLoaded] = useState(false);
     const [observer, setObserver] = useState<IntersectionObserver>();
 
@@ -65,10 +66,10 @@ export const Image = observer(({ image }: Props) => {
                     <img src={image.url} alt="" />
                     <div className="image-overlay">
                         <a
-                            href={`https://twitter.com/${image.user!.username}`}
+                            href={`https://twitter.com/${user.username}`}
                             target="_blank"
                         >
-                            @{image.user!.username}
+                            @{user.username}
                         </a>
                         {" - "}
                         <a href={image.tweetUrl} target="_blank">

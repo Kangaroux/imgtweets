@@ -12,7 +12,10 @@ export const App = observer(() => {
         <div>
             <Sidebar />
             {store.currentImages.length ? (
-                <ScrollContainer images={store.currentImages} />
+                <ScrollContainer
+                    images={store.currentImages}
+                    user={store.currentUser}
+                />
             ) : (
                 <Help />
             )}
