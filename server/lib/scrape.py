@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import List
 
 from django.db import IntegrityError
+from django.db.models import F
 from django.utils import timezone
 
 from api.models import Image, TwitterUser
@@ -106,6 +107,9 @@ class Scraper:
 
         logger.debug(f"Added {added} new images")
         logger.info("Scrape end")
+
+        user.num_scrapes += 1
+        user.save()
 
         return (len(tweets), len(image_kwargs), added)
 

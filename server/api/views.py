@@ -3,15 +3,14 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.utils import timezone
-from django.db.models import Count
+from django.db.models import Count, F
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, NotFound, Throttled, ValidationError
 from rest_framework.filters import OrderingFilter
-from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from api.models import Image, TwitterUser
+from api.models import Image, TwitterUser, USERNAME_LENGTH
 from api.serializers import ImageSerializer, TwitterUserSerializer
 from api.throttle import FetchThrottle, StandardThrottle
 from lib.scrape import Scraper
@@ -32,7 +31,10 @@ class ImageAPI(ReadOnlyModelViewSet):
 
     def filter_queryset(self, queryset):
         qs = super().filter_queryset(queryset)
-        username = self.request.query_params.get("username", "").strip()
+        username = self.request.query_params.get(
+            "username",
+            "",
+        ).strip()[:USERNAME_LENGTH]
 
         if username:
             qs = qs.filter(user__username__iexact=username)
@@ -40,14 +42,24 @@ class ImageAPI(ReadOnlyModelViewSet):
         return qs
 
     def list(self, request, *args, **kwargs):
-        username = request.query_params.get("username", "").strip()
+        username = request.query_params.get("username", "").strip()[:USERNAME_LENGTH]
 
         # If a username was provided, try rescraping their timeline first if needed
         if username:
+            user: TwitterUser | None = None
+
             try:
                 user: TwitterUser = TwitterUser.objects.get(username__iexact=username)
             except TwitterUser.DoesNotExist:
                 pass
+
+            # Searching directly for a user should update their hit count. Checking the page
+            # number avoids counting multiple hits if paginating. Yes, this is abusable, but
+            # it doesn't need to be very accurate
+            if user and request.query_params.get("page", "1") == "1":
+                TwitterUser.objects.filter(pk=user.pk).update(
+                    num_hits=F("num_hits") + 1
+                )
 
             # Check if the user's timeline should be rescraped
             if user and user.last_scraped_at:
@@ -72,14 +84,14 @@ class ImageAPI(ReadOnlyModelViewSet):
 
     @action(detail=False, throttle_classes=[FetchThrottle])
     def fetch(self, request, pk=None):
-        username = request.query_params.get("username", "").strip()
+        username = request.query_params.get("username", "").strip()[:USERNAME_LENGTH]
 
         if not username:
             raise ValidationError(
                 {"username": "username query param is missing or empty"}
             )
 
-        user: TwitterUser = None
+        user: TwitterUser | None = None
 
         try:
             user = TwitterUser.objects.get(username__iexact=username)
@@ -127,7 +139,7 @@ class TwitterUserAPI(ReadOnlyModelViewSet):
 
     def list(self, request, *args, **kwargs):
         is_exact = request.query_params.get("exact", "0") == "1"
-        search = request.query_params.get("search", "").strip()
+        search = request.query_params.get("search", "").strip()[:USERNAME_LENGTH]
 
         qs = self.filter_queryset(self.get_queryset())
 
