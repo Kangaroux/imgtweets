@@ -12,8 +12,7 @@ class Store {
     // A list of users matching the username search query
     usernameSearchResults: API.User[] = [];
 
-    // A list of users to show in the search results when the query is empty. This just shows
-    // the most recently scraped users
+    // A list of users to show in the search results when the query is empty
     defaultSearchResults: API.User[] = [];
 
     // Start with the sidebar open for larger screens only
@@ -78,14 +77,16 @@ class Store {
         }
     }
 
-    async getUser(username: string, force = false) {
+    async getUser(username: string) {
         const user = await API.getUser(username);
         runInAction(() => (this.currentUser = user));
     }
 
-    async fetchMostPopularUsers() {
-        const users = await API.listUsers({ sort: "popular" });
-        runInAction(() => (this.defaultSearchResults = users));
+    async fetchMostRecentUsers() {
+        const users = await API.listUsers({ sort: "newest" });
+        runInAction(() => {
+            this.defaultSearchResults = users.filter(u => u.imageCount > 0)
+        });
     }
 
     async searchUsers(search: string) {

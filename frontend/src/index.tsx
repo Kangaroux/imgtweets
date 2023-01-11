@@ -6,7 +6,7 @@ import { store } from "./store";
 import "./index.scss";
 
 async function initStore() {
-    await store.fetchMostPopularUsers();
+    await store.fetchMostRecentUsers();
     console.debug("initialized store");
 }
 
