@@ -37,12 +37,22 @@ export const UsernameSearchResults = observer((props: Props) => {
             <>
                 {!!results &&
                     results.map((u) => {
+                        // If more than 10% of the images are NSFW we'll consider this
+                        // account to be NSFW
+                        const isNsfw =
+                            u.imageCount &&
+                            u.nsfwImageCount / u.imageCount > 0.1;
+
                         return (
                             <li onClick={() => onSelect(u)} key={u.id}>
-                                <img src={u.profileImageUrl} alt="" />{" "}
-                                <span>
+                                <span className="profile-image">
+                                    <img src={u.profileImageUrl} alt=" " />
+                                </span>{" "}
+                                <span className="user-info">
                                     {u.username} ({u.imageCount}){" "}
-                                    {u.nsfwImageCount}
+                                    {isNsfw && (
+                                        <span className="nsfw-user">NSFW</span>
+                                    )}
                                 </span>
                             </li>
                         );
@@ -55,8 +65,8 @@ export const UsernameSearchResults = observer((props: Props) => {
                         <img
                             src="https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
                             alt=""
-                        />{" "}
-                        <span>{search}</span>
+                        />
+                        <span className="user-info">{search}</span>
                     </li>
                 )}
             </>

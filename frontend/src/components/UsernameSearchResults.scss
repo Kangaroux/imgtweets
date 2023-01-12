@@ -20,15 +20,26 @@
         }
     }
 
-    img {
-        width: 32px;
+    .profile-image {
+        display: inline-block;
+        width: 48px;
+        height: 48px;
+
+        img {
+            width: 100%;
+        }
     }
 
-    span {
+    .user-info {
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
         margin-left: 20px;
         font-weight: bold;
+    }
+
+    .nsfw-user {
+        color: #B00;
+        font-weight: normal;
     }
 }
