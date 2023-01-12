@@ -23,7 +23,10 @@ export const Sidebar = observer(() => {
                         target="_blank"
                         title="View the project on Github"
                     >
-                        Github
+                        <img
+                            className="github-icon"
+                            src="/static/img/github.png"
+                        />
                     </a>
                 </div>
             </>

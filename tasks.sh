@@ -28,6 +28,6 @@ case "$1" in
 
     cp -R server/static/* dist/static/
     cp frontend/build/{index.html,robots.txt} dist/
-    cp -R frontend/build/static/* dist/static/
+    cp -R frontend/build/static/* frontend/build/img/ dist/static/
     ;;
 esac
