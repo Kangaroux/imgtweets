@@ -46,6 +46,7 @@ export interface User {
     twitterId: string;
     username: string;
     imageCount: number;
+    nsfwImageCount: number;
 }
 
 export interface GetImagesOptions {
@@ -182,6 +183,7 @@ export async function getUser(username: string): Promise<User | null> {
         twitterId: data.results[0].twitter_id,
         username: data.results[0].username,
         imageCount: data.results[0].image_count,
+        nsfwImageCount: data.results[0].nsfw_image_count,
     };
 
     return user;
@@ -226,7 +228,8 @@ export async function listUsers({page, search, sort}: {page?: number, search?: s
             twitterId: u.twitter_id,
             username: u.username,
             imageCount: u.image_count,
-        });
+            nsfwImageCount: u.nsfw_image_count,
+    });
     }
 
     return users;

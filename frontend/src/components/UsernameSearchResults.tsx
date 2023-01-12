@@ -41,7 +41,8 @@ export const UsernameSearchResults = observer((props: Props) => {
                             <li onClick={() => onSelect(u)} key={u.id}>
                                 <img src={u.profileImageUrl} alt="" />{" "}
                                 <span>
-                                    {u.username} ({u.imageCount})
+                                    {u.username} ({u.imageCount}){" "}
+                                    {u.nsfwImageCount}
                                 </span>
                             </li>
                         );
