@@ -14,6 +14,7 @@ export interface Props {
 
 export const Image = observer(({ image, user }: Props) => {
     const [loaded, setLoaded] = useState(false);
+    const [failed, setFailed] = useState(false);
     const [observer, setObserver] = useState<IntersectionObserver>();
 
     // Create the lazy loading observer on mount. Images are preloaded as
@@ -59,27 +60,39 @@ export const Image = observer(({ image, user }: Props) => {
         [observer]
     );
 
+    let inner;
+
+    if (!loaded) {
+        inner = <div className="image-placeholder" />;
+    } else if (failed) {
+        inner = (
+            <div className="image-error">
+                <h1>deleted?</h1>
+            </div>
+        );
+    } else {
+        inner = (
+            <div className="image">
+                <img src={image.url} alt="" onError={() => setFailed(true)} />
+                <div className="image-overlay">
+                    <a
+                        href={`https://twitter.com/${user.username}`}
+                        target="_blank"
+                    >
+                        @{user.username}
+                    </a>
+                    {" - "}
+                    <a href={image.tweetUrl} target="_blank">
+                        View tweet
+                    </a>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="image-container" ref={ref}>
-            {loaded ? (
-                <div className="image">
-                    <img src={image.url} alt="" />
-                    <div className="image-overlay">
-                        <a
-                            href={`https://twitter.com/${user.username}`}
-                            target="_blank"
-                        >
-                            @{user.username}
-                        </a>
-                        {" - "}
-                        <a href={image.tweetUrl} target="_blank">
-                            View tweet
-                        </a>
-                    </div>
-                </div>
-            ) : (
-                <div className="image-placeholder" />
-            )}
+            {inner}
         </div>
     );
 });

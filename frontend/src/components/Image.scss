@@ -30,10 +30,26 @@
     }
 
     .image-placeholder {
-        background-color: #aaa;
-        width: 800px;
-        height: 1200px;
+        background-color: #777;
+        width: 600px;
+        height: 900px;
         border-radius: 10px;
+    }
+
+    .image-error {
+        background-color: #333;
+        width: 500px;
+        height: 200px;
+        border-radius: 10px;
+        text-align: center;
+
+        h1 {
+            color: #555;
+            font-weight: normal;
+            margin: 0;
+            position: relative;
+            top: 50%;
+        }
     }
 
     @media (max-width: 640px) {
