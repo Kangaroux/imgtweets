@@ -3,10 +3,7 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.utils import timezone
-from django.db.models import IntegerField
 from django.db.models import Count, F, OuterRef, Subquery
-from django.db.models.functions import Cast
-from django.db.models.expressions import RawSQL
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, NotFound, Throttled, ValidationError
 from rest_framework.filters import OrderingFilter
@@ -137,7 +134,18 @@ class ImageAPI(ReadOnlyModelViewSet):
 
 class TwitterUserAPI(ReadOnlyModelViewSet):
     throttle_classes = [StandardThrottle]
-    queryset = TwitterUser.objects.annotate(image_count=Count("image"))
+
+    # This subquery counts the number of NSFW images for each user
+    subqs = (
+        Image.objects.filter(user_id=OuterRef("id"), nsfw=True)
+        .values("user_id")
+        .annotate(Count("nsfw"))
+    )
+    queryset = TwitterUser.objects.annotate(
+        image_count=Count("image"),
+        nsfw_image_count=Subquery(subqs.values("nsfw__count")),
+    )
+
     serializer_class = TwitterUserSerializer
 
     def list(self, request, *args, **kwargs):
@@ -162,17 +170,6 @@ class TwitterUserAPI(ReadOnlyModelViewSet):
 
         page = self.paginate_queryset(qs)
         results = list(page) if page is not None else list(qs)
-
-        ids = [u.id for u in results]
-        qs = (
-            Image.objects.filter(user_id__in=ids, nsfw=True)
-            .values("user_id")
-            .annotate(nsfw_image_count=Count("nsfw"))
-        )
-        user_to_nsfw_count = {row["user_id"]: row["nsfw_image_count"] for row in qs}
-
-        for user in results:
-            user.nsfw_image_count = user_to_nsfw_count[user.id]
 
         if sort == "match":
             results = sort_users_by_best_match(results, search)
