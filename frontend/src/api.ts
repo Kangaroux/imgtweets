@@ -64,8 +64,6 @@ export async function scrapeUserImages(username: string) {
         }
     );
 
-    plausible("apiFetch", { props: { username, time: Date.now() - earlier } });
-
     if (!resp.ok) {
         if (resp.status === 404) {
             toast.error(err.user404);
@@ -99,10 +97,6 @@ export async function getImages(options: GetImagesOptions = {}, page = 1) {
             onTimeout: () => toast.error(err.timeout),
         }
     );
-
-    plausible("apiGetImages", {
-        props: { ...options, time: Date.now() - earlier },
-    });
 
     if (!resp.ok) {
         if (resp.status === 429) {
@@ -149,10 +143,6 @@ export async function getUser(username: string): Promise<User | null> {
             onTimeout: () => toast.error(err.timeout),
         }
     );
-
-    plausible("apiGetUser", {
-        props: { username, time: Date.now() - earlier },
-    });
 
     if (!resp.ok) {
         if (resp.status === 404) {
@@ -201,8 +191,6 @@ export async function listUsers({page, search, sort}: {page?: number, search?: s
         timeout: defaultTimeout,
         onTimeout: () => toast.error(err.timeout),
     });
-
-    plausible("apilistUsers", { props: { time: Date.now() - earlier } });
 
     if (!resp.ok) {
         if (resp.status === 429) {
