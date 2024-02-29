@@ -1,18 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <!-- <link rel="icon" href="%PUBLIC_URL%/favicon.ico"> -->
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+            name="description"
+            content="Image browser for Twitter. Easily view the images a user has posted to their timeline."
+        />
+        <title>imgtweets - Twitter Images</title>
+        <style>
+            body {
+                background-color: #111;
+                font-family: sans-serif;
+                font-size: 18px;
+                padding: 0;
+                margin: 0;
+            }
 
-<head>
-  <meta charset="utf-8" />
-  <!-- <link rel="icon" href="%PUBLIC_URL%/favicon.ico" /> -->
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description"
-    content="Image browser for Twitter. Easily view the images a user has posted to their timeline." />
-  <title>imgtweets - Twitter Images</title>
-</head>
+            .container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
 
-<body>
-  <noscript>This site requires Javascript to run.</noscript>
-  <div id="root"></div>
-</body>
+            @media screen and (min-width: 900px) and (min-height: 1000px) {
+                body,
+                .container {
+                    height: 100vh;
+                }
+            }
 
+            .announcement {
+                background-color: #222;
+                max-width: 800px;
+                border-radius: 10px;
+                padding: 20px;
+                margin: 0;
+            }
+
+            h1 {
+                margin: 32px 0;
+            }
+
+            h3 {
+                margin: 32px 0 0;
+            }
+
+            h1,
+            h3 {
+                color: #c0c0c0;
+            }
+
+            p,
+            ul {
+                color: #aaa;
+                letter-spacing: 0.4px;
+                line-height: 1.4em;
+            }
+
+            a,
+            a:link,
+            a:visited,
+            a:hover {
+                color: #a3baff;
+            }
+
+            .nsfw {
+                color: #c99;
+            }
+
+            .github {
+                text-align: right;
+                margin-bottom: 0;
+                line-height: 0;
+            }
+
+            .github img {
+                width: 48px;
+                margin: -30px -10px -10px;
+                padding: 10px;
+                opacity: 0.3;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="announcement">
+                <h1>imgtweets is shutting down 😦</h1>
+                <p>
+                    On March 29th, 2023, Twitter
+                    <a
+                        href="https://techcrunch.com/2023/03/29/twitter-announces-new-api-with-only-free-basic-and-enterprise-levels/"
+                        target="_blank"
+                        rel="noreferrer"
+                        >announced</a
+                    >
+                    the new pricing tiers for their API. Scraping a user's
+                    timeline now requires their "basic" plan which costs $100
+                    per month. 😬
+                </p>
+                <p>
+                    imgtweets was always intended to be free to use, but I can't
+                    spend $1200 per year just to keep it running. Unfortunately,
+                    this means imgtweets will be shutdown for the foreseeable
+                    future.
+                </p>
+                <h3>Statistics</h3>
+                <p>
+                    imgtweets was active from May 2022 until June 2023. During
+                    those 13 months...
+                </p>
+                <ul>
+                    <li>
+                        <b>32,610</b> users were searched (<b>18,449</b>
+                        <span class="nsfw">NSFW</span>)
+                    </li>
+                    <li>
+                        <b>4,553,790</b> images were viewed (<b>2,509,420</b>
+                        <span class="nsfw">NSFW</span>)
+                    </li>
+                    <li>
+                        Over <b>100,000</b> people visited and used the site
+                        (thank you! 🎉)
+                    </li>
+                    <li>
+                        The most popular user was <b>@mary_wp</b> with
+                        <b>1,162</b> hits!
+                    </li>
+                </ul>
+                <h3>Background</h3>
+                <p>
+                    I started making imgtweets after I got frustrated trying to
+                    find posts from user's timelines. Around the same time,
+                    Twitter was also really starting to lockout people who
+                    didn't have an account.
+                </p>
+                <p>
+                    There are a lot of really cool creators on Twitter who share
+                    their work. However, it's often difficult to find what
+                    you're looking for. I wanted a way to browse Twitter without
+                    having to use Twitter.
+                </p>
+                <p>
+                    It makes me happy to see how many people came to use the
+                    site. I didn't post about it or try spreading the word, so
+                    the fact that over 100k people were able to find it on their
+                    own is really cool. It's fulfilling to know that I wasn't
+                    the only person who was looking for something like this.
+                </p>
+                <p class="github">
+                    <a
+                        href="https://github.com/Kangaroux/imgtweets"
+                        target="_blank"
+                        rel="noreferrer"
+                        ><img src="img/github.png" />
+                    </a>
+                </p>
+            </div>
+        </div>
+    </body>
 </html>
