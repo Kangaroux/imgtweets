@@ -13,7 +13,7 @@ services:
       context: .
       dockerfile: Dockerfile.nginx
     ports:
-      - "80:80"
+      - "0.0.0.0:80:80"
     restart: unless-stopped
   # db:
   #   image: postgres:14-alpine
