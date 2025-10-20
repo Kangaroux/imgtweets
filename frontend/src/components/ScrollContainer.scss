@@ -1,0 +1,12 @@
+.scroll-container {
+    padding-top: 20px;
+    height: 100vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.scroll-container-flex {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
